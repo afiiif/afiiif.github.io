@@ -1,5 +1,7 @@
 ---
-
+const title = 'Muhammad Afifudin';
+const description =
+  'Muhammad Afifudin, a software engineer, UX designer, content creator, ex-statistician';
 ---
 
 <html lang="en">
@@ -8,7 +10,13 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
+    <title>{title}</title>
+    <meta property="og:title" content={title} />
+    <meta name="twitter:title" content={title} />
+    <meta name="description" content={description} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:description" content={description} />
+    <link rel="canonical" href={Astro.site} />
   </head>
   <body
     class="bg-gray-50 [&_a]:font-medium [&_a]:underline [&_a]:decoration-dashed [&_a:hover]:decoration-solid [&_a]:text-emerald-600"
