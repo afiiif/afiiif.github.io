@@ -117,14 +117,19 @@ const products = [
               <div class="text-sm pb-2.5 text-gray-500">{product.dateInfo}</div>
               <div class="rounded-t-lg overflow-hidden border relative">
                 {product.previewPlaceholder ? (
-                  <img
-                    id={`img-${i}`}
-                    src={`/img/${product.previewPlaceholder.src}`}
-                    width={product.previewPlaceholder.width}
-                    height={product.previewPlaceholder.height}
-                    class="w-full"
-                    alt={`${product.name} preview`}
-                  />
+                  <>
+                    <img
+                      id={`img-${i}`}
+                      src={`/img/${product.previewPlaceholder.src}`}
+                      width={product.previewPlaceholder.width}
+                      height={product.previewPlaceholder.height}
+                      class="w-full"
+                      alt={`${product.name} preview`}
+                    />
+                    <div class="absolute bottom-4 right-4 bg-white/90 rounded-full px-3.5 py-1.5 text-sm">
+                      ⏳ &nbsp;Loading animated preview...
+                    </div>
+                  </>
                 ) : (
                   <img
                     src={`/img/${product.preview.src}`}
@@ -195,14 +200,18 @@ const products = [
   setTimeout(() => {
     fetch('/img/pokemon-awesome.webp').then((res) => {
       res.blob().then((imgBlob) => {
-        (document.getElementById('img-0') as HTMLImageElement).src = URL.createObjectURL(imgBlob);
+        const $img = document.getElementById('img-0') as HTMLImageElement;
+        $img.src = URL.createObjectURL(imgBlob);
+        $img.nextElementSibling!.remove();
       });
     });
   }, 600);
   setTimeout(() => {
     fetch('/img/statistiku.webp').then((res) => {
       res.blob().then((imgBlob) => {
-        (document.getElementById('img-1') as HTMLImageElement).src = URL.createObjectURL(imgBlob);
+        const $img = document.getElementById('img-1') as HTMLImageElement;
+        $img.src = URL.createObjectURL(imgBlob);
+        $img.nextElementSibling!.remove();
       });
     });
   }, 1300);
