@@ -3,6 +3,8 @@ const title = 'Muhammad Afifudin';
 const description =
   'Muhammad Afifudin, a software engineer, designer, content creator, ex-statistician.';
 
+const assetsUrl = 'https://afif-assets.pages.dev/afiiif_github_io/v1';
+
 const products = [
   {
     href: 'https://pokemon-awesome.vercel.app/',
@@ -120,7 +122,7 @@ const products = [
                   <>
                     <img
                       id={`img-${i}`}
-                      src={`/img/${product.previewPlaceholder.src}`}
+                      src={`${assetsUrl}/${product.previewPlaceholder.src}`}
                       width={product.previewPlaceholder.width}
                       height={product.previewPlaceholder.height}
                       class="w-full"
@@ -132,7 +134,7 @@ const products = [
                   </>
                 ) : (
                   <img
-                    src={`/img/${product.preview.src}`}
+                    src={`${assetsUrl}/${product.preview.src}`}
                     width={product.preview.width}
                     height={product.preview.height}
                     class="w-full"
@@ -197,17 +199,20 @@ const products = [
 </style>
 
 <script>
+  const assetsUrl = 'https://afif-assets.pages.dev/afiiif_github_io/v1';
+
   setTimeout(() => {
-    fetch('/img/pokemon-awesome.webp').then((res) => {
+    fetch(`${assetsUrl}/pokemon-awesome.webp`).then((res) => {
       res.blob().then((imgBlob) => {
         const $img = document.getElementById('img-0') as HTMLImageElement;
         $img.src = URL.createObjectURL(imgBlob);
         $img.nextElementSibling!.remove();
       });
     });
-  }, 600);
+  }, 500);
+
   setTimeout(() => {
-    fetch('/img/statistiku.webp').then((res) => {
+    fetch(`${assetsUrl}/statistiku.webp`).then((res) => {
       res.blob().then((imgBlob) => {
         const $img = document.getElementById('img-1') as HTMLImageElement;
         $img.src = URL.createObjectURL(imgBlob);
