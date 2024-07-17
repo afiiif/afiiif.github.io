@@ -10,6 +10,7 @@ const products = [
     desc: 'Rank #2 on Google when you search for "compare pokemons".',
     dateInfo: 'July 2024',
     preview: { src: 'pokemon-awesome.webp', width: 600, height: 379 },
+    previewPlaceholder: { src: 'pokemon-awesome-placeholder.webp', width: 500, height: 316 },
   },
   {
     href: 'statistiku',
@@ -17,6 +18,7 @@ const products = [
     desc: 'An innovative web-based statistics tool, showcasing my proficiency in math, statistics, & software-engineering.',
     dateInfo: 'March 2019',
     preview: { src: 'statistiku.webp', width: 600, height: 379 },
+    previewPlaceholder: { src: 'statistiku-placeholder.webp', width: 500, height: 316 },
   },
   {
     href: 'kode-wilayah-dan-pos',
@@ -77,7 +79,8 @@ const products = [
     <meta name="twitter:description" content={description} />
     <link rel="canonical" href={Astro.site} />
 
-    <link rel="preload" as="image" href={`/img/${products[0].preview!.src}`} />
+    <link rel="preload" as="image" href={`/img/${products[0].previewPlaceholder!.src}`} />
+    <link rel="preload" as="image" href={`/img/${products[1].previewPlaceholder!.src}`} />
   </head>
 
   <body class="bg-gray-50">
@@ -107,25 +110,30 @@ const products = [
                   stroke-width="2"
                   viewBox="0 0 24 24"
                 >
-                  <>
-                    <path d="M7 17L17 7" />
-                    <path d="M7 7h10v10" />
-                  </>
+                  <path d="M7 17L17 7" />
+                  <path d="M7 7h10v10" />
                 </svg>
               </a>
               <div class="text-sm pb-2.5 text-gray-500">{product.dateInfo}</div>
-              <div class="rounded-t-lg overflow-hidden border">
-                {product.preview ? (
+              <div class="rounded-t-lg overflow-hidden border relative">
+                {product.previewPlaceholder ? (
+                  <img
+                    id={`img-${i}`}
+                    src={`/img/${product.previewPlaceholder.src}`}
+                    width={product.previewPlaceholder.width}
+                    height={product.previewPlaceholder.height}
+                    class="w-full"
+                    alt={`${product.name} preview`}
+                  />
+                ) : (
                   <img
                     src={`/img/${product.preview.src}`}
                     width={product.preview.width}
                     height={product.preview.height}
                     class="w-full"
                     alt={`${product.name} preview`}
-                    loading={i > 2 ? 'lazy' : undefined}
+                    loading="lazy"
                   />
-                ) : (
-                  <div class="w-full aspect-video bg-gray-200" />
                 )}
               </div>
               <p class="text-sm py-1.5 px-2.5 bg-gray-100 text-gray-600 border rounded-b-lg">
@@ -164,21 +172,38 @@ const products = [
   </body>
 </html>
 
-<style>
-  :global(a) {
+<style is:global>
+  a {
     @apply font-medium hover:underline decoration-dashed;
   }
-  :global(.section-links) {
+  .section-links {
     @apply pt-4 relative;
-    a {
-      @apply font-normal hover:underline decoration-dashed inline-block py-1 pl-9 text-gray-600;
-      &::before {
-        content: '▶';
-        @apply absolute left-2.5;
-      }
-      span {
-        @apply font-semibold text-black;
-      }
-    }
+  }
+  .section-links a {
+    @apply font-normal hover:underline decoration-dashed inline-block py-1 pl-9 text-gray-600;
+  }
+  .section-links a::before {
+    content: '▶';
+    @apply absolute left-2.5;
+  }
+  .section-links a span {
+    @apply font-semibold text-black;
   }
 </style>
+
+<script>
+  setTimeout(() => {
+    fetch('/img/pokemon-awesome.webp').then((res) => {
+      res.blob().then((imgBlob) => {
+        (document.getElementById('img-0') as HTMLImageElement).src = URL.createObjectURL(imgBlob);
+      });
+    });
+  }, 600);
+  setTimeout(() => {
+    fetch('/img/statistiku.webp').then((res) => {
+      res.blob().then((imgBlob) => {
+        (document.getElementById('img-1') as HTMLImageElement).src = URL.createObjectURL(imgBlob);
+      });
+    });
+  }, 1300);
+</script>
