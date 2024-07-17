@@ -1,7 +1,66 @@
 ---
 const title = 'Muhammad Afifudin';
 const description =
-  'Muhammad Afifudin, a software engineer, UX designer, content creator, ex-statistician';
+  'Muhammad Afifudin, a software engineer, designer, content creator, ex-statistician.';
+
+const products = [
+  {
+    href: 'https://pokemon-awesome.vercel.app/',
+    name: 'Pokémon Awesome',
+    desc: 'Rank #2 on Google when you search for "compare pokemons".',
+    dateInfo: 'July 2024',
+    preview: { src: 'pokemon-awesome.webp', width: 600, height: 379 },
+  },
+  {
+    href: 'statistiku',
+    name: 'Statistiku',
+    desc: 'An innovative web-based statistics tool, showcasing my proficiency in math, statistics, & software-engineering.',
+    dateInfo: 'March 2019',
+    preview: { src: 'statistiku.webp', width: 600, height: 379 },
+  },
+  {
+    href: 'kode-wilayah-dan-pos',
+    name: 'KodeWilayah',
+    desc: 'The best website to search Indonesian region code & postal code.',
+    dateInfo: 'June 2024',
+    preview: { src: 'kode-wilayah-dan-pos.webp', width: 600, height: 379 },
+  },
+  {
+    href: 'https://www.youtube.com/@afifu',
+    name: 'YouTube.com/@afifu',
+    desc: 'Well-animated educational contents on software engineering.',
+    dateInfo: '2021-2023',
+    preview: { src: 'afif-youtube-channel.webp', width: 800, height: 518 },
+  },
+  {
+    href: 'https://marketplace.visualstudio.com/items?itemName=afifu.vscode-js-ts-react-nextjs-snippets',
+    name: 'JS/TS React/Next.js Snippets',
+    desc: 'Productivity VSCode extension (>5K installs).',
+    dateInfo: 'May 2023',
+    preview: { src: 'vscode-js-ts-snippets.gif', width: 680, height: 306 },
+  },
+  {
+    href: 'https://www.youtube.com/watch?v=q7Lbn_JtLdw',
+    name: 'BagiTugas',
+    desc: "This tool significantly speeds up my coworker's work.",
+    dateInfo: 'July 2020',
+    preview: { src: 'bagitugas.png', width: 850, height: 403 },
+  },
+  {
+    href: 'spk',
+    name: 'National Standard Industrial Classification',
+    desc: 'Industrial classification code & definition used by BPS (national statistics office).',
+    dateInfo: 'June 2020',
+    preview: { src: 'spk.webp', width: 600, height: 379 },
+  },
+  {
+    href: 'kode-wilayah',
+    name: 'KodeWilayah (BPS)',
+    desc: "Indonesia's region code from BPS (national statistics office).",
+    dateInfo: 'May 2020',
+    preview: { src: 'kode-wilayah-bps.webp', width: 600, height: 379 },
+  },
+];
 ---
 
 <html lang="en">
@@ -17,171 +76,109 @@ const description =
     <meta property="og:description" content={description} />
     <meta name="twitter:description" content={description} />
     <link rel="canonical" href={Astro.site} />
+
+    <link rel="preload" as="image" href={`/img/${products[0].preview!.src}`} />
   </head>
-  <body
-    class="bg-gray-50 [&_a]:font-medium [&_a]:underline [&_a]:decoration-dashed [&_a:hover]:decoration-solid [&_a]:text-emerald-600"
-  >
-    <main class="px-5 py-9 md:px-8 md:pt-14 md:pb-24 mx-auto max-w-3xl">
-      <h1 class="font-semibold text-2xl">Muhammad Afifudin</h1>
-      <p class="pt-0.5">Software engineer, UX designer, content creator, ex-statistician.</p>
 
-      <h2 class="mt-10 bg-gray-100 inline-block px-2.5 -mx-2.5 tracking-wider">
-        PERSONAL PRODUCTS
-      </h2>
-      <p class="pt-2 italic text-sm text-gray-500">
-        I love building products, especially web apps.<br />Sometimes just for fun, and sometimes to
-        solve real-world problems.
-      </p>
-      <ul
-        class={[
-          'pt-8',
-          '[&>li]:flex',
-          '[&_h3]:w-14 [&_h3]:pt-2',
-          '[&_ul]:border-l [&_ul]:pb-5 [&_ul]:pl-4 [&_ul]:flex-1 [&_ul]:text-gray-500 [&_ul_li]:pb-5',
-          '[&_p]:text-sm',
-          '[&_span]:text-sm [&_span]:inline-block [&_span]:bg-gray-100 [&_span]:rounded-md [&_span]:px-1',
-        ].join(' ')}
-      >
-        <li>
-          <h3>2024</h3>
-          <ul>
-            <li>
-              <b>🌐</b>
-              <a href="https://pokemon-awesome.vercel.app">pokemon-awesome.vercel.app</a>
-              <span>v2.0</span>
-              <p>Rank #2 on Google when you search for "<i>compare pokemons</i>".</p>
-            </li>
-            <li>
-              <b>🌐</b>
-              <a href="https://afiiif.github.io/statistiku">afiiif.github.io/statistiku</a>
-              <span>v3.0</span>
-              <p>
-                An awesome web-based statistics tool to proof that I'm good at math & statistics
-                too.
+  <body class="bg-gray-50">
+    <main class="px-3.5 py-12 md:px-8 md:pt-14 md:pb-24 mx-auto max-w-2xl transition-[padding]">
+      <h1 class="font-semibold text-3xl">Muhammad Afifudin 🇮🇩</h1>
+      <p class="pt-0.5">Software engineer & designer in 1 person.</p>
+
+      <div class="pt-14 flex gap-3">
+        <h2 class="tracking-wider text-emerald-600">FEATURED PERSONAL PROJECTS</h2>
+        <div class="flex-1 border-t mt-3 border-dashed border-emerald-600"></div>
+      </div>
+      {
+        products.map((product, i) => {
+          return (
+            <section class="pt-9">
+              <a href={product.href} target="_blank">
+                <h3 class="inline font-semibold text-xl">{product.name}</h3>
+                <svg
+                  class="inline relative -top-0.5"
+                  fill="none"
+                  width="20"
+                  height="20"
+                  shape-rendering="geometricPrecision"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <>
+                    <path d="M7 17L17 7" />
+                    <path d="M7 7h10v10" />
+                  </>
+                </svg>
+              </a>
+              <div class="text-sm pb-2.5 text-gray-500">{product.dateInfo}</div>
+              <div class="rounded-t-lg overflow-hidden border">
+                {product.preview ? (
+                  <img
+                    src={`/img/${product.preview.src}`}
+                    width={product.preview.width}
+                    height={product.preview.height}
+                    class="w-full"
+                    alt={`${product.name} preview`}
+                    loading={i > 2 ? 'lazy' : undefined}
+                  />
+                ) : (
+                  <div class="w-full aspect-video bg-gray-200" />
+                )}
+              </div>
+              <p class="text-sm py-1.5 px-2.5 bg-gray-100 text-gray-600 border rounded-b-lg">
+                {product.desc}
               </p>
-            </li>
-            <li>
-              <b>🌐</b>
-              <a href="https://afiiif.github.io/kode-wilayah-dan-pos"
-                >afiiif.github.io/kode-wilayah-dan-pos</a
-              >
-              <p>Indonesia's region & postal codes website that is spark-joy.</p>
-            </li>
-          </ul>
-        </li>
+            </section>
+          );
+        })
+      }
 
+      <div class="pt-16 flex gap-3">
+        <h2 class="tracking-wider text-emerald-600">CONTACTS / LINKS</h2>
+        <div class="flex-1 border-t mt-3 border-dashed border-emerald-600"></div>
+      </div>
+      <ul class="section-links">
         <li>
-          <h3>2023</h3>
-          <ul>
-            <li>
-              <b>📺</b>
-              <a href="https://www.youtube.com/@afifu">youtube.com/@afifu</a>
-              <p>Teaching software engineering stuffs on YouTube.</p>
-            </li>
-            <li>
-              <b>📦</b>
-              <a href="https://www.npmjs.com/package/floppy-disk">FloppyDisk NPM Library</a>
-              <p>Learned how to replicate popular front-end libraries: Zustand & TanStack-Query.</p>
-            </li>
-          </ul>
+          <a href="mailto:afiiifudin@gmail.com"><span>afiiifudin@gmail.com</span> &nbsp;📬</a>
         </li>
-
         <li>
-          <h3>2022</h3>
-          <ul>
-            <li>
-              <b>📺</b>
-              <a href="https://www.youtube.com/@afifu">youtube.com/@afifu</a>
-              <p>Teaching software engineering stuffs on YouTube.</p>
-            </li>
-            <li>
-              <b>🌐</b>
-              <a href="https://pokemon-awesome.vercel.app" class="!text-gray-400"
-                >pokemon-awesome.vercel.app</a
-              >
-              <span>v1.0</span>
-              <p>*Same as above (2024), but v1.0 was uglier.</p>
-            </li>
-            <li>
-              <b>🧰</b>
-              <a
-                href="https://marketplace.visualstudio.com/items?itemName=afifu.vscode-js-ts-react-nextjs-snippets"
-                >JS/TS/React Snippets (VSCode)</a
-              >
-              <p>A JavaScript/TypeScript productivity tools (currently >5K installs).</p>
-            </li>
-          </ul>
+          <a href="https://www.linkedin.com/in/m-afifudin/"
+            ><span>linkedin.com</span> / m-afifudin</a
+          >
         </li>
-
         <li>
-          <h3>2021</h3>
-          <ul>
-            <li>
-              <b>📺</b>
-              <a href="https://www.youtube.com/@afifu">youtube.com/@afifu</a>
-              <p>Started teaching software engineering stuffs on YouTube.</p>
-            </li>
-          </ul>
+          <a href="https://github.com/afiiif"><span>github.com</span> / afiiif</a>
         </li>
-
         <li>
-          <h3>2020</h3>
-          <ul>
-            <li>
-              <b>🌐</b>
-              <a href="https://afiiif.github.io/spk">afiiif.github.io/spk</a>
-              <p>Indonesian standard industrial classification code & definition.</p>
-            </li>
-            <li>
-              <b>🌐</b>
-              <a href="https://afiiif.github.io/kode-wilayah">afiiif.github.io/kode-wilayah</a>
-              <p>Indonesia's region code from BPS (national statistics office).</p>
-            </li>
-            <li>
-              <b>🌐</b>
-              <a href="https://drive.google.com/file/d/1Ae2XwkueQb0g-9Lu77utGimrcLfypM6U/view"
-                >BPS's Allstats App Redesign</a
-              >
-              <p>A web to search data published by national statistics office.</p>
-            </li>
-          </ul>
+          <a href="https://x.com/digimushrm"><span>x.com</span> / digimushrm</a>
         </li>
-
         <li>
-          <h3>2019</h3>
-          <ul class="!pb-2 mb-3">
-            <li>
-              <b>🌐</b>
-              <a href="https://www.youtube.com/watch?v=q7Lbn_JtLdw">BagiTugas App</a>
-              <p>This tool significantly speeds up my coworker's work.</p>
-            </li>
-            <li>
-              <b>🌐</b>
-              <a href="https://afiiif.github.io/statistiku" class="!text-gray-400"
-                >afiiif.github.io/statistiku</a
-              >
-              <span>v2.0</span>
-              <p>*Same as above (2024), but earlier version.</p>
-            </li>
-          </ul>
+          <a href="https://pinterest.com/afif_u/"><span>pinterest.com</span> / afif_u</a>
         </li>
       </ul>
-
-      <h2 class="mt-7 bg-gray-100 inline-block px-2.5 -mx-2.5 tracking-wider">LINKS</h2>
-      <ul class={['pt-3.5 list-disc pl-7', '[&_a]:inline-block [&_a]:py-0.5'].join(' ')}>
-        <li>
-          <a href="https://www.linkedin.com/in/m-afifudin/">linkedin.com/in/m-afifudin</a>
-        </li>
-        <li>
-          <a href="https://github.com/afiiif">github.com/afiiif</a>
-        </li>
-        <li>
-          <a href="https://x.com/digimushrm">x.com/digimushrm</a>
-        </li>
-        <li>
-          <a href="https://pinterest.com/afif_u/">pinterest.com/afif_u</a>
-        </li>
-      </ul>
+      <div class="pb-8"></div>
     </main>
   </body>
 </html>
+
+<style>
+  :global(a) {
+    @apply font-medium hover:underline decoration-dashed;
+  }
+  :global(.section-links) {
+    @apply pt-4 relative;
+    a {
+      @apply font-normal hover:underline decoration-dashed inline-block py-1 pl-9 text-gray-600;
+      &::before {
+        content: '▶';
+        @apply absolute left-2.5;
+      }
+      span {
+        @apply font-semibold text-black;
+      }
+    }
+  }
+</style>
