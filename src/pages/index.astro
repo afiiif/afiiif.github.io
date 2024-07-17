@@ -81,8 +81,18 @@ const products = [
     <meta name="twitter:description" content={description} />
     <link rel="canonical" href={Astro.site} />
 
-    <link rel="preload" as="image" href={`/img/${products[0].previewPlaceholder!.src}`} />
-    <link rel="preload" as="image" href={`/img/${products[1].previewPlaceholder!.src}`} />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href={`/img/${products[0].previewPlaceholder!.src}`}
+    />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href={`/img/${products[1].previewPlaceholder!.src}`}
+    />
   </head>
 
   <body class="bg-gray-50">
