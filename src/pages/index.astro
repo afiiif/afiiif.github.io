@@ -138,7 +138,7 @@ const products = [
                       class="w-full"
                       alt={`${product.name} preview`}
                     />
-                    <div class="absolute bottom-4 right-4 bg-white/90 rounded-full px-3.5 py-1.5 text-sm">
+                    <div class="absolute bottom-4 right-4 bg-white/90 rounded-full px-3.5 py-1.5 text-sm appear">
                       ⏳ &nbsp;Loading animated preview...
                     </div>
                   </>
@@ -192,6 +192,18 @@ const products = [
 <style is:global>
   a {
     @apply font-medium hover:underline decoration-dashed;
+  }
+  .appear {
+    opacity: 0;
+    animation: appear 0.5s linear 0.7s forwards;
+  }
+  @keyframes appear {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 100%;
+    }
   }
   .section-links {
     @apply pt-4 relative;
