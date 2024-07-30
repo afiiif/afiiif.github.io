@@ -3,7 +3,10 @@ const title = 'Muhammad Afifudin';
 const description =
   'Muhammad Afifudin, a software engineer, designer, content creator, ex-statistician.';
 
-const assetsUrl = 'https://afif-assets.pages.dev/afiiif_github_io/v1';
+const assetsUrl =
+  process.env.NODE_ENV === 'development'
+    ? 'img'
+    : 'https://afif-assets.pages.dev/afiiif_github_io/v1';
 
 const products = [
   {
@@ -23,13 +26,6 @@ const products = [
     previewPlaceholder: { src: 'statistiku-placeholder.webp', width: 500, height: 316 },
   },
   {
-    href: 'kode-wilayah-dan-pos',
-    name: 'KodeWilayah',
-    desc: 'The best website to search Indonesian region code & postal code.',
-    dateInfo: 'June 2024',
-    preview: { src: 'kode-wilayah-dan-pos.webp', width: 600, height: 379 },
-  },
-  {
     href: 'https://www.youtube.com/@afifu',
     name: 'YouTube.com/@afifu',
     desc: 'Well-animated educational contents on software engineering.',
@@ -41,7 +37,14 @@ const products = [
     name: 'JS/TS React/Next.js Snippets',
     desc: 'Productivity VSCode extension (>5K installs).',
     dateInfo: 'May 2023',
-    preview: { src: 'vscode-js-ts-snippets.gif', width: 680, height: 306 },
+    preview: { src: 'vscode-js-ts-snippets.webp', width: 680, height: 306 },
+  },
+  {
+    href: 'kode-wilayah-dan-pos',
+    name: 'KodeWilayah',
+    desc: 'The best website to search Indonesian region code & postal code.',
+    dateInfo: 'June 2024',
+    preview: { src: 'kode-wilayah-dan-pos.webp', width: 600, height: 379 },
   },
   {
     href: 'https://www.youtube.com/watch?v=q7Lbn_JtLdw',
@@ -56,13 +59,6 @@ const products = [
     desc: 'Industrial classification code & definition used by BPS (national statistics office).',
     dateInfo: 'June 2020',
     preview: { src: 'spk.webp', width: 600, height: 379 },
-  },
-  {
-    href: 'kode-wilayah',
-    name: 'KodeWilayah (BPS)',
-    desc: "Indonesia's region code from BPS (national statistics office).",
-    dateInfo: 'May 2020',
-    preview: { src: 'kode-wilayah-bps.webp', width: 600, height: 379 },
   },
 ];
 ---
@@ -107,7 +103,7 @@ const products = [
       {
         products.map((product, i) => {
           return (
-            <section class="pt-10">
+            <section class="pt-10 pb-1">
               <div class="sm:flex sm:items-center sm:justify-between">
                 <a
                   href={product.href}
@@ -252,7 +248,10 @@ const products = [
 </style>
 
 <script>
-  const assetsUrl = 'https://afif-assets.pages.dev/afiiif_github_io/v1';
+  const assetsUrl =
+    process.env.NODE_ENV === 'development'
+      ? 'img'
+      : 'https://afif-assets.pages.dev/afiiif_github_io/v1';
 
   setTimeout(() => {
     fetch(`${assetsUrl}/pokemon-awesome.webp`).then((res) => {
