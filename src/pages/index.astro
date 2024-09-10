@@ -106,12 +106,15 @@ const products = [
           Sept 2024
         </div>
       </div>
-      <p class="text-sm pt-1.5 pb-4 text-neutral-400 font-light">Click on the fish to duplicate.</p>
+      <p class="text-sm pt-1.5 pb-4 text-neutral-400 font-light">
+        Take a moment to relax, unwind, and watch the fish.
+      </p>
       <div
         id="insaniquarium-tank"
         class="rounded-lg overflow-hidden relative border border-neutral-700 aspect-video"
       >
       </div>
+      <p class="text-xs text-neutral-400 pt-2">Click on the fish to duplicate it.</p>
     </section>
 
     <div
@@ -270,12 +273,12 @@ const products = [
   const observer = new IntersectionObserver(([entry]) => {
     if (entry.isIntersecting) {
       observer.disconnect();
-      addToTank();
+      addToTank({ posY: -80 * 2 }); // Large guppy
       addToTank({ posY: -80 * 4 }); // Carnivore
-      addToTank({ posY: -80 * 2 }); // Medium guppy
       addToTank({ posY: -80 * 5 }); // Seymour
       addToTank({ posY: -80 * 3 }); // King guppy
-      addToTank();
+      addToTank(); // (default) Medium guppy
+      addToTank({ posY: 0 }); // Small guppy
     }
   });
   observer.observe($tank);
@@ -294,7 +297,7 @@ const products = [
     const $fishContainer = document.createElement('div');
     const $fish = document.createElement('i');
 
-    if (option.posY) {
+    if (typeof option.posY === 'number') {
       $fish.style.setProperty('--pos-y', `${option.posY}px`);
     }
     $fish.className = 'scale-75 md:scale-90';
@@ -321,7 +324,7 @@ const products = [
       const nextPosition = getRandomPosition();
       const xDistance = Math.abs(nextPosition.x - position.x);
 
-      const moveDuration = randBetween(2000, 6000);
+      const moveDuration = randBetween(1500, 6000);
 
       if (facing === 'l' && nextPosition.x > position.x) {
         // Turn right
@@ -370,7 +373,7 @@ const products = [
     };
 
     render();
-    const delay = randBetween(1000, 4000);
+    const delay = randBetween(100, 2500);
     setTimeout(() => {
       moveFish();
     }, delay);
