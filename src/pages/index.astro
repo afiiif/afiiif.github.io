@@ -99,6 +99,20 @@ const products = [
       <div class="h-px bg-neutral-500 flex-1"></div>
     </div>
     <Products products={products} />
+    <section class="pt-10 pb-1">
+      <div class="sm:flex sm:items-center sm:justify-between">
+        <h3 class="inline font-semibold text-lg">Insaniquarium Fun Project</h3>
+        <div class="text-sm bg-neutral-800 text-white inline-block rounded-md px-2 py-0.5">
+          Sept 2024
+        </div>
+      </div>
+      <p class="text-sm pt-1.5 pb-4 text-neutral-400 font-light">Click anywhere</p>
+      <div
+        id="insaniquarium-tank"
+        class="rounded-lg overflow-hidden relative border border-neutral-700 aspect-video"
+      >
+      </div>
+    </section>
 
     <div
       class="mt-24 text-2xl font-extralight flex gap-3.5 items-center text-neutral-400 tracking-wide"
@@ -179,6 +193,47 @@ const products = [
       opacity: 100%;
     }
   }
+
+  #insaniquarium-tank {
+    > div {
+      @apply absolute transition-[top,left];
+      transition-duration: 3s;
+    }
+  }
+
+  .fish-swim {
+    width: 80px;
+    height: 80px;
+    background-image: url('/insaniquarium/fish-swim.png');
+    background-position-x: 0px;
+    background-position-y: var(--pos-y, -80px);
+    animation: swim 1.2s steps(9) infinite;
+  }
+  @keyframes swim {
+    from {
+      background-position-x: 0px;
+    }
+    to {
+      background-position-x: -720px;
+    }
+  }
+
+  .fish-turn {
+    width: 80px;
+    height: 80px;
+    background-image: url('/insaniquarium/fish-turn.png');
+    background-position-x: 0px;
+    background-position-y: var(--pos-y, -80px);
+    animation: turn 1.2s steps(9) forwards;
+  }
+  @keyframes turn {
+    from {
+      background-position-x: 0px;
+    }
+    to {
+      background-position-x: -720px;
+    }
+  }
 </style>
 
 <script>
@@ -206,4 +261,102 @@ const products = [
       });
     });
   }, 1600);
+
+  const $tank = document.getElementById('insaniquarium-tank') as HTMLDivElement;
+
+  const randBetween = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  };
+
+  const insaniquarium = (option: { posY?: number } = {}) => {
+    const $fish = document.createElement('div');
+    const $fishContainer = document.createElement('div');
+
+    if (option.posY) {
+      $fish.style.setProperty('--pos-y', `${option.posY}px`);
+    }
+
+    const divWidth = 80;
+    const divHeight = 80;
+    const maxTurnDistance = 80 * 2;
+
+    const getRandomPosition = () => {
+      const containerWidth = $tank.clientWidth;
+      const containerHeight = $tank.clientHeight;
+      const maxX = containerWidth - divWidth;
+      const maxY = containerHeight - divHeight;
+      const x = randBetween(-0.25 * divWidth, maxX + 0.25 * divWidth);
+      const y = randBetween(-0.25 * divHeight, maxY + 0.25 * divHeight);
+      return { x, y };
+    };
+
+    let position = getRandomPosition();
+    let state = 'swim' as 'swim' | 'turn';
+    let facing: 'l' | 'r' = Math.random() < 0.5 ? 'l' : 'r';
+
+    const moveFish = () => {
+      const nextPosition = getRandomPosition();
+      const xDistance = Math.abs(nextPosition.x - position.x);
+
+      if (facing === 'l' && nextPosition.x > position.x) {
+        // Turn right
+        if (xDistance > maxTurnDistance) {
+          nextPosition.x = position.x + maxTurnDistance;
+        }
+        return setTimeout(() => {
+          position = nextPosition;
+          state = 'turn';
+          render();
+          setTimeout(() => {
+            facing = 'r';
+            state = 'swim';
+            render();
+            moveFish();
+          }, 1200);
+        }, 3000);
+      }
+      if (facing === 'r' && nextPosition.x < position.x) {
+        // Turn left
+        if (xDistance > maxTurnDistance) {
+          nextPosition.x = position.x - maxTurnDistance;
+        }
+        return setTimeout(() => {
+          position = nextPosition;
+          state = 'turn';
+          render();
+          setTimeout(() => {
+            facing = 'l';
+            state = 'swim';
+            render();
+            moveFish();
+          }, 1200);
+        }, 3000);
+      }
+
+      position = nextPosition;
+      setTimeout(() => {
+        render();
+        moveFish();
+      }, 3000);
+    };
+
+    const render = () => {
+      console.info({ state, facing, position });
+      $fish.className = state === 'swim' ? 'fish-swim' : 'fish-turn';
+      $fishContainer.classList.toggle('scale-x-[-1]', facing === 'r');
+      $fishContainer.style.left = `${position.x}px`;
+      $fishContainer.style.top = `${position.y}px`;
+    };
+
+    render();
+    moveFish();
+
+    $fishContainer.appendChild($fish);
+    $tank.appendChild($fishContainer);
+  };
+
+  insaniquarium({ posY: -80 * 2 });
+  insaniquarium({ posY: -80 * 3 });
+  insaniquarium();
+  insaniquarium();
 </script>
