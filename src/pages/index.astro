@@ -113,8 +113,12 @@ const products = [
         id="insaniquarium-tank"
         class="rounded-lg overflow-hidden relative border border-neutral-700 aspect-video"
       >
+        <p
+          class="text-xs text-neutral-400 absolute right-2.5 bottom-2.5 pointer-events-none animate-pulse [animation-duration:7s]"
+        >
+          Click on the fish to duplicate it.
+        </p>
       </div>
-      <p class="text-xs text-neutral-400 pt-2">Click on the fish to duplicate it.</p>
     </section>
 
     <div
@@ -200,11 +204,16 @@ const products = [
   #insaniquarium-tank {
     @apply bg-gradient-to-t from-neutral-950 to-neutral-800;
     > div {
-      @apply absolute transition-[top,left];
+      @apply absolute transition-[top,left] pointer-events-none;
       transition-duration: var(--move-duration, 3s);
     }
     i {
-      @apply block cursor-pointer hover:opacity-75 scale-75 md:scale-90;
+      @apply block cursor-pointer scale-75 sm:scale-90 rounded-lg border-neutral-500 border-dashed pointer-events-auto;
+    }
+  }
+  @media (pointer: fine) {
+    #insaniquarium-tank i {
+      @apply hover:opacity-75;
     }
   }
 
@@ -269,38 +278,48 @@ const products = [
     });
   }, 1600);
 
-  const $tank = document.getElementById('insaniquarium-tank') as HTMLDivElement;
-  const observer = new IntersectionObserver(([entry]) => {
-    if (entry.isIntersecting) {
-      observer.disconnect();
-      addToTank({ posY: -80 * 2 }); // Large guppy
-      addToTank({ posY: -80 * 4 }); // Carnivore
-      addToTank({ posY: -80 * 5 }); // Seymour
-      addToTank({ posY: -80 * 3 }); // King guppy
-      addToTank(); // (default) Medium guppy
-      addToTank({ posY: 0 }); // Small guppy
-    }
-  });
-  observer.observe($tank);
+  // ---
 
   const randBetween = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
 
-  const addToTank = (
-    option: {
-      posY?: number;
-      position?: { x: number; y: number };
-      facing?: 'l' | 'r';
-    } = {}
-  ) => {
+  const $tank = document.getElementById('insaniquarium-tank') as HTMLDivElement;
+  const observer = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) {
+      observer.disconnect();
+      addToTank({ type: 'guppyLg' });
+      addToTank({ type: 'carnivore' });
+      addToTank({ type: 'seymour' });
+      addToTank({ type: 'guppyKing' });
+      addToTank({ type: 'guppyMd' });
+      addToTank({ type: 'guppySm' });
+    }
+  });
+  observer.observe($tank);
+
+  const FISH_SPRITE_POSITION = {
+    guppySm: -80 * 0,
+    guppyMd: -80 * 1,
+    guppyLg: -80 * 2,
+    guppyKing: -80 * 3,
+    carnivore: -80 * 4,
+    seymour: -80 * 5,
+  };
+  const tankPopulation: Partial<Record<keyof typeof FISH_SPRITE_POSITION, number>> = {};
+
+  const addToTank = (option: {
+    type: keyof typeof FISH_SPRITE_POSITION;
+    domOrder?: 'first' | 'last';
+    position?: { x: number; y: number };
+    facing?: 'l' | 'r';
+  }) => {
+    tankPopulation[option.type] = (tankPopulation[option.type] || 0) + 1;
+
     const $fishContainer = document.createElement('div');
     const $fish = document.createElement('i');
 
-    if (typeof option.posY === 'number') {
-      $fish.style.setProperty('--pos-y', `${option.posY}px`);
-    }
-    $fish.className = 'scale-75 md:scale-90';
+    $fish.style.setProperty('--pos-y', `${FISH_SPRITE_POSITION[option.type]}px`);
 
     const divWidth = 80;
     const divHeight = 80;
@@ -363,7 +382,13 @@ const products = [
       if (moveDuration) {
         $fish.style.setProperty('--move-duration', `${moveDuration}ms`);
       }
-      $fish.className = state === 'swim' ? 'fish-swim' : 'fish-turn';
+      if (state === 'swim') {
+        $fish.classList.add('fish-swim');
+        $fish.classList.remove('fish-turn');
+      } else {
+        $fish.classList.add('fish-turn');
+        $fish.classList.remove('fish-swim');
+      }
       $fishContainer.classList.toggle('scale-x-[-1]', facing === 'r');
       $fishContainer.style.left = `${position.x}px`;
       $fishContainer.style.top = `${position.y}px`;
@@ -380,8 +405,12 @@ const products = [
 
     $fishContainer.appendChild($fish);
     $fish.addEventListener('click', () => {
+      $fish.classList.add('border');
+      setTimeout(() => $fish.classList.remove('border'), 500);
+
       addToTank({
-        posY: option.posY,
+        type: option.type,
+        domOrder: tankPopulation[option.type]! % 2 ? 'last' : 'first',
         facing,
         position: {
           x: $fishContainer.offsetLeft,
@@ -389,6 +418,11 @@ const products = [
         },
       });
     });
-    $tank.appendChild($fishContainer);
+
+    if (option.domOrder === 'first') {
+      $tank.prepend($fishContainer);
+    } else {
+      $tank.append($fishContainer);
+    }
   };
 </script>
