@@ -43,7 +43,7 @@ const products = [
   {
     href: 'https://www.youtube.com/watch?v=q7Lbn_JtLdw',
     name: 'BagiTugas (BPS)',
-    desc: "This tool significantly speeds up my coworker's work.",
+    desc: "Crafted an app from scratch using Bootstrap, PHP, and SQLite, which significantly improved the efficiency and speed of my coworker's workflow.",
     dateInfo: 'July 2020',
     preview: { src: 'bagitugas.png', width: 850, height: 403 },
   },
@@ -76,111 +76,109 @@ const products = [
     />
   </Fragment>
 
-  <main class="px-5 py-14 sm:px-7 md:px-8 md:pt-16 md:pb-24 mx-auto max-w-2xl transition-[padding]">
-    <h1 class="font-bold text-2xl sm:text-3xl">Muhammad Afifudin 🇮🇩</h1>
-    <p class="pt-0.5 text-neutral-400 text-lg sm:text-2xl font-extralight">
-      Software engineer & designer <span class="inline-block">in 1 person.</span>
-    </p>
+  <h1 class="font-bold text-2xl sm:text-3xl">Muhammad Afifudin 🇮🇩</h1>
+  <p class="pt-0.5 text-neutral-400 text-lg sm:text-2xl font-extralight">
+    Software engineer & designer <span class="inline-block">in 1 person.</span>
+  </p>
 
-    <p class="pt-8">
-      I love creating products that bring real value to people, and sometimes indulge in unique
-      projects just for fun. I bring together technical precision and creative vision. FE, BE,
-      web/mobile, I deliver clean, high-performance solutions that look great and work even better.
-    </p>
-    <p class="pt-4">
-      I'm a professional remote worker, and currently not interested in on-site work, unless ...
-      <i class="bg-neutral-800 px-2 py-0.5 rounded-md text-neutral-400">*some text missing*</i>
-    </p>
+  <p class="pt-8">
+    I love creating products that bring real value to people, and sometimes indulge in unique
+    projects just for fun. I bring together technical precision and creative vision. FE, BE,
+    web/mobile, I deliver clean, high-performance solutions that look great and work even better.
+  </p>
+  <p class="pt-4">
+    I'm a professional remote worker, and currently not interested in on-site work, unless ...
+    <i class="bg-neutral-800 px-2 py-0.5 rounded-md text-neutral-400">*some text missing*</i>
+  </p>
 
-    <div
-      class="mt-20 text-2xl font-extralight flex gap-3.5 items-center text-neutral-400 tracking-wide"
-    >
-      <h2>PROJECTS</h2>
-      <div class="h-px bg-neutral-500 flex-1"></div>
-    </div>
-    <Products products={products} />
-    <section class="pt-10 pb-1">
-      <div class="sm:flex sm:items-center sm:justify-between">
-        <h3 class="inline font-semibold text-lg mr-1">Insaniquarium Fun Project</h3>
-        <div class="text-sm bg-neutral-800 text-white inline-block rounded-md px-2 py-0.5">
-          Sept 2024
-        </div>
+  <div
+    class="mt-20 text-2xl font-extralight flex gap-3.5 items-center text-neutral-400 tracking-wide"
+  >
+    <h2>PROJECTS</h2>
+    <div class="h-px bg-neutral-500 flex-1"></div>
+  </div>
+  <Products products={products} />
+  <section class="pt-10 pb-1">
+    <div class="sm:flex sm:items-center sm:justify-between">
+      <h3 class="inline font-semibold text-lg mr-1">Insaniquarium Fun Project</h3>
+      <div class="text-sm bg-neutral-800 text-white inline-block rounded-md px-2 py-0.5">
+        Sept 2024
       </div>
-      <p class="text-sm pt-1.5 pb-4 text-neutral-400 font-light">
-        Take a moment to relax, unwind, and watch the fish.
-      </p>
-      <div
-        id="insaniquarium-tank"
-        class="rounded-lg overflow-hidden relative border border-neutral-700 aspect-video"
+    </div>
+    <p class="text-sm pt-1.5 pb-4 text-neutral-400 font-light">
+      Take a moment to relax, unwind, and watch the fish.
+    </p>
+    <div
+      id="insaniquarium-tank"
+      class="rounded-lg overflow-hidden relative border border-neutral-700 aspect-video"
+    >
+      <p
+        class="text-xs text-neutral-400 absolute right-2.5 bottom-2.5 pointer-events-none animate-pulse [animation-duration:7s]"
       >
-        <p
-          class="text-xs text-neutral-400 absolute right-2.5 bottom-2.5 pointer-events-none animate-pulse [animation-duration:7s]"
-        >
-          Click on the fish to duplicate it.
-        </p>
-      </div>
-    </section>
-
-    <div
-      class="mt-24 text-2xl font-extralight flex gap-3.5 items-center text-neutral-400 tracking-wide"
-    >
-      <h2>TOOLS</h2>
-      <div class="h-px bg-neutral-500 flex-1"></div>
+        Click on the fish to duplicate it.
+      </p>
     </div>
-    <ul
-      class:list={[
-        'pt-8 flex flex-wrap gap-2 items-center',
-        '[&_li:not(:last-child)]:bg-neutral-800 [&_li:not(:last-child)]:px-2 [&_li:not(:last-child)]:py-0.5 [&_li:not(:last-child)]:rounded-md',
-      ]}
-    >
-      <li>JavaScript</li>
-      <li>TypeScript</li>
-      <li>Next JS</li>
-      <li>Astro JS</li>
-      <li>Vanilla JS</li>
-      <li>jQuery</li>
-      <li>HTML</li>
-      <li>CSS</li>
-      <li>Tailwind</li>
-      <li>Ant Design</li>
-      <li>Radix UI</li>
-      <li>TanStack-Query</li>
-      <li class="text-neutral-400">and many more...</li>
-    </ul>
+  </section>
 
-    <div
-      class="mt-24 text-2xl font-extralight flex gap-3.5 items-center text-neutral-400 tracking-wide"
-    >
-      <h2>LINKS</h2>
-      <div class="h-px bg-neutral-500 flex-1"></div>
-    </div>
-    <ul
-      class:list={[
-        'pt-7',
-        '[&_a]:inline-block [&_a]:py-1',
-        '[&_a:hover]:underline [&_a:hover]:decoration-dashed [&_a:hover]:decoration-blue-400',
-        '[&_span]:text-neutral-400 [&_span]:ml-[3px]',
-      ]}
-    >
-      <li>
-        <a href="mailto:afiiifudin@gmail.com">afiiifudin@gmail.com &nbsp;📬</a>
-      </li>
-      <li>
-        <a href="https://www.linkedin.com/in/m-afifudin/">linkedin.com<span>/m-afifudin</span></a>
-      </li>
-      <li>
-        <a href="https://github.com/afiiif">github.com<span>/afiiif</span></a>
-      </li>
-      <li>
-        <a href="https://x.com/digimushrm">x.com<span>/digimushrm</span></a>
-      </li>
-      <li>
-        <a href="https://dev.to/afiiif">dev.to<span>/afiiif</span></a>
-      </li>
-    </ul>
+  <div
+    class="mt-24 text-2xl font-extralight flex gap-3.5 items-center text-neutral-400 tracking-wide"
+  >
+    <h2>TOOLS</h2>
+    <div class="h-px bg-neutral-500 flex-1"></div>
+  </div>
+  <ul
+    class:list={[
+      'pt-8 flex flex-wrap gap-2 items-center',
+      '[&_li:not(:last-child)]:bg-neutral-800 [&_li:not(:last-child)]:px-2 [&_li:not(:last-child)]:py-0.5 [&_li:not(:last-child)]:rounded-md',
+    ]}
+  >
+    <li>JavaScript</li>
+    <li>TypeScript</li>
+    <li>Next JS</li>
+    <li>Astro JS</li>
+    <li>Vanilla JS</li>
+    <li>jQuery</li>
+    <li>HTML</li>
+    <li>CSS</li>
+    <li>Tailwind</li>
+    <li>Ant Design</li>
+    <li>Radix UI</li>
+    <li>TanStack-Query</li>
+    <li class="text-neutral-400">and many more...</li>
+  </ul>
 
-    <div class="pb-12"></div>
-  </main>
+  <div
+    class="mt-24 text-2xl font-extralight flex gap-3.5 items-center text-neutral-400 tracking-wide"
+  >
+    <h2>LINKS</h2>
+    <div class="h-px bg-neutral-500 flex-1"></div>
+  </div>
+  <ul
+    class:list={[
+      'pt-7',
+      '[&_a]:inline-block [&_a]:py-1',
+      '[&_a:hover]:underline [&_a:hover]:decoration-dashed [&_a:hover]:decoration-blue-400',
+      '[&_span]:text-neutral-400 [&_span]:ml-[3px]',
+    ]}
+  >
+    <li>
+      <a href="mailto:afiiifudin@gmail.com">afiiifudin@gmail.com &nbsp;📬</a>
+    </li>
+    <li>
+      <a href="https://www.linkedin.com/in/m-afifudin/">linkedin.com<span>/m-afifudin</span></a>
+    </li>
+    <li>
+      <a href="https://github.com/afiiif">github.com<span>/afiiif</span></a>
+    </li>
+    <li>
+      <a href="https://x.com/digimushrm">x.com<span>/digimushrm</span></a>
+    </li>
+    <li>
+      <a href="https://dev.to/afiiif">dev.to<span>/afiiif</span></a>
+    </li>
+  </ul>
+
+  <div class="pb-12"></div>
 </Layout>
 
 <style is:global>

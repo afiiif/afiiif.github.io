@@ -27,7 +27,14 @@ const { title, description } = Astro.props;
   </head>
 
   <body>
-    <slot />
+    <main
+      class:list={[
+        'px-5 py-14 sm:px-7 md:px-8 md:pt-16 md:pb-24',
+        'mx-auto max-w-2xl transition-[padding]',
+      ]}
+    >
+      <slot />
+    </main>
   </body>
 </html>
 
