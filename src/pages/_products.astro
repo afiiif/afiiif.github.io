@@ -27,11 +27,15 @@ const { products } = Astro.props;
 
 {
   products.map((product, i) => {
+    const url =
+      !product.href.startsWith('http') && process.env.NODE_ENV === 'development'
+        ? `https://afiiif.github.io/${product.href}`
+        : product.href;
     return (
       <section class="pt-10 pb-1">
         <div class="sm:flex sm:items-center sm:justify-between">
           <a
-            href={product.href}
+            href={url}
             target="_blank"
             class="[&:hover_h3]:underline [&:hover_h3]:decoration-dashed [&:hover_h3]:decoration-blue-400 inline-block -my-1 py-1 mr-1"
           >
@@ -72,7 +76,11 @@ const { products } = Astro.props;
             </>
           ) : (
             <img
-              src={`${assetsUrl}/${product.preview.src}`}
+              src={
+                product.preview.src.startsWith('http')
+                  ? product.preview.src
+                  : `${assetsUrl}/${product.preview.src}`
+              }
               width={product.preview.width}
               height={product.preview.height}
               class="w-full"
