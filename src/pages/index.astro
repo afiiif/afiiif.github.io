@@ -300,10 +300,10 @@ const products = [
       observer.disconnect();
       addToTank({ type: 'guppyLg' });
       addToTank({ type: 'carnivore' });
-      addToTank({ type: 'seymour' });
+      addToTank({ type: 'seymour', additionalMoveDelay: 2100 });
       addToTank({ type: 'guppyKing' });
       addToTank({ type: 'guppyMd' });
-      addToTank({ type: 'guppySm' });
+      addToTank({ type: 'guppySm', additionalMoveDelay: -600 });
     }
   });
   observer.observe($tank);
@@ -323,6 +323,7 @@ const products = [
     domOrder?: 'first' | 'last';
     position?: { x: number; y: number };
     facing?: 'l' | 'r';
+    additionalMoveDelay?: number;
   }) => {
     tankPopulation[option.type] = (tankPopulation[option.type] || 0) + 1;
 
@@ -353,7 +354,8 @@ const products = [
       const nextPosition = getRandomPosition();
       const xDistance = Math.abs(nextPosition.x - position.x);
 
-      const moveDuration = randBetween(1500, 6000);
+      const moveDuration = 1000 + randBetween(2500, 5000) + (option.additionalMoveDelay || 0);
+      const delayDuration = randBetween(200, 500) + (option.additionalMoveDelay || 0) / 3;
 
       if (facing === 'l' && nextPosition.x > position.x) {
         // Turn right
@@ -362,11 +364,13 @@ const products = [
         }
         position = nextPosition;
         state = 'turn';
-        render(1200, () => {
+        render(moveDuration, true);
+        setTimeout(() => {
           facing = 'r';
           state = 'swim';
-          render(moveDuration - 1000, moveFish);
-        });
+          render(undefined, false);
+        }, 1200);
+        setTimeout(moveFish, moveDuration + delayDuration);
         return;
       }
       if (facing === 'r' && nextPosition.x < position.x) {
@@ -376,21 +380,24 @@ const products = [
         }
         position = nextPosition;
         state = 'turn';
-        render(1200, () => {
+        render(moveDuration, true);
+        setTimeout(() => {
           facing = 'l';
           state = 'swim';
-          render(moveDuration - 1000, moveFish);
-        });
+          render(undefined, false);
+        }, 1200);
+        setTimeout(moveFish, moveDuration + delayDuration);
         return;
       }
 
       position = nextPosition;
-      render(moveDuration, moveFish);
+      render(moveDuration, true);
+      setTimeout(moveFish, moveDuration + delayDuration);
     };
 
-    const render = (moveDuration?: number, callback?: () => void) => {
+    const render = (moveDuration?: number, updatePosition?: boolean) => {
       if (moveDuration) {
-        $fish.style.setProperty('--move-duration', `${moveDuration}ms`);
+        $fishContainer.style.setProperty('--move-duration', `${moveDuration}ms`);
       }
       if (state === 'swim') {
         $fish.classList.add('fish-swim');
@@ -400,10 +407,9 @@ const products = [
         $fish.classList.remove('fish-swim');
       }
       $fishContainer.classList.toggle('scale-x-[-1]', facing === 'r');
-      $fishContainer.style.left = `${position.x}px`;
-      $fishContainer.style.top = `${position.y}px`;
-      if (callback) {
-        setTimeout(() => callback(), moveDuration);
+      if (updatePosition !== false) {
+        $fishContainer.style.left = `${position.x}px`;
+        $fishContainer.style.top = `${position.y}px`;
       }
     };
 
@@ -426,6 +432,7 @@ const products = [
           x: $fishContainer.offsetLeft,
           y: $fishContainer.offsetTop,
         },
+        additionalMoveDelay: option.additionalMoveDelay,
       });
     });
 
