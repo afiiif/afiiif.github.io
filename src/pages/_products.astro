@@ -58,7 +58,19 @@ const { products } = Astro.props;
             {product.dateInfo}
           </div>
         </div>
-        <p class="text-sm pt-1.5 pb-4 text-neutral-400 font-light">{product.desc}</p>
+        <p class="text-sm pt-1.5 pb-4 text-neutral-400 font-light">
+          {product.desc.split('\n').map((paragraph, i) => {
+            if (i) {
+              return (
+                <>
+                  <br />
+                  {paragraph}
+                </>
+              );
+            }
+            return paragraph;
+          })}
+        </p>
         <div class="rounded-lg overflow-hidden relative border border-neutral-700">
           {product.previewPlaceholder ? (
             <>
