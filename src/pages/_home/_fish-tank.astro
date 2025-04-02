@@ -1,0 +1,217 @@
+<div
+  id="insaniquarium-tank"
+  class="rounded-lg overflow-hidden relative border border-neutral-700 aspect-video"
+>
+  <p
+    class="text-xs text-neutral-400 absolute right-2.5 bottom-2.5 pointer-events-none animate-pulse [animation-duration:7s]"
+  >
+    Click on the fish to duplicate it.
+  </p>
+</div>
+
+<style is:global>
+  #insaniquarium-tank {
+    @apply bg-gradient-to-t from-neutral-950 to-neutral-800;
+    > div {
+      @apply absolute transition-[top,left] pointer-events-none;
+      transition-duration: var(--move-duration, 3s);
+    }
+    i {
+      @apply block cursor-pointer scale-75 sm:scale-90 rounded-lg border-neutral-500 border-dashed pointer-events-auto;
+    }
+  }
+  @media (pointer: fine) {
+    #insaniquarium-tank i {
+      @apply hover:opacity-75;
+    }
+  }
+
+  .fish-swim {
+    width: 80px;
+    height: 80px;
+    background-image: url('/insaniquarium/swim.png');
+    background-position-x: 0px;
+    background-position-y: var(--pos-y, -80px);
+    animation: swim 1.6s steps(9) infinite;
+  }
+  @keyframes swim {
+    from {
+      background-position-x: 0px;
+    }
+    to {
+      background-position-x: -720px;
+    }
+  }
+
+  .fish-turn {
+    width: 80px;
+    height: 80px;
+    background-image: url('/insaniquarium/turn.png');
+    background-position-x: 0px;
+    background-position-y: var(--pos-y, -80px);
+    animation: turn 1.2s steps(9) forwards;
+  }
+  @keyframes turn {
+    from {
+      background-position-x: 0px;
+    }
+    to {
+      background-position-x: -720px;
+    }
+  }
+</style>
+
+<script>
+  const randBetween = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  };
+
+  const $tank = document.getElementById('insaniquarium-tank') as HTMLDivElement;
+  const observer = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) {
+      observer.disconnect();
+      addToTank({ type: 'guppyLg' });
+      addToTank({ type: 'carnivore' });
+      addToTank({ type: 'seymour', additionalMoveDelay: 2100 });
+      addToTank({ type: 'guppyKing' });
+      addToTank({ type: 'guppyMd' });
+      addToTank({ type: 'guppySm', additionalMoveDelay: -600 });
+    }
+  });
+  observer.observe($tank);
+
+  const FISH_SPRITE_POSITION = {
+    guppySm: -80 * 0,
+    guppyMd: -80 * 1,
+    guppyLg: -80 * 2,
+    guppyKing: -80 * 3,
+    carnivore: -80 * 4,
+    seymour: -80 * 5,
+  };
+  const tankPopulation: Partial<Record<keyof typeof FISH_SPRITE_POSITION, number>> = {};
+
+  const addToTank = (option: {
+    type: keyof typeof FISH_SPRITE_POSITION;
+    domOrder?: 'first' | 'last';
+    position?: { x: number; y: number };
+    facing?: 'l' | 'r';
+    additionalMoveDelay?: number;
+  }) => {
+    tankPopulation[option.type] = (tankPopulation[option.type] || 0) + 1;
+
+    const $fishContainer = document.createElement('div');
+    const $fish = document.createElement('i');
+
+    $fish.style.setProperty('--pos-y', `${FISH_SPRITE_POSITION[option.type]}px`);
+
+    const divWidth = 80;
+    const divHeight = 80;
+    const maxTurnDistance = 80 * 2;
+
+    const getRandomPosition = () => {
+      const containerWidth = $tank.clientWidth;
+      const containerHeight = $tank.clientHeight;
+      const maxX = containerWidth - divWidth;
+      const maxY = containerHeight - divHeight;
+      const x = randBetween(-0.25 * divWidth, maxX + 0.25 * divWidth);
+      const y = randBetween(-0.25 * divHeight, maxY + 0.25 * divHeight);
+      return { x, y };
+    };
+
+    let position = option.position || getRandomPosition();
+    let state = 'swim' as 'swim' | 'turn';
+    let facing: 'l' | 'r' = option.facing || (Math.random() < 0.5 ? 'l' : 'r');
+
+    const moveFish = () => {
+      const nextPosition = getRandomPosition();
+      const xDistance = Math.abs(nextPosition.x - position.x);
+
+      const moveDuration = 1000 + randBetween(2500, 5000) + (option.additionalMoveDelay || 0);
+      const delayDuration = randBetween(200, 500) + (option.additionalMoveDelay || 0) / 3;
+
+      if (facing === 'l' && nextPosition.x > position.x) {
+        // Turn right
+        if (xDistance > maxTurnDistance) {
+          nextPosition.x = position.x + maxTurnDistance;
+        }
+        position = nextPosition;
+        state = 'turn';
+        render(moveDuration, true);
+        setTimeout(() => {
+          facing = 'r';
+          state = 'swim';
+          render(undefined, false);
+        }, 1200);
+        setTimeout(moveFish, moveDuration + delayDuration);
+        return;
+      }
+      if (facing === 'r' && nextPosition.x < position.x) {
+        // Turn left
+        if (xDistance > maxTurnDistance) {
+          nextPosition.x = position.x - maxTurnDistance;
+        }
+        position = nextPosition;
+        state = 'turn';
+        render(moveDuration, true);
+        setTimeout(() => {
+          facing = 'l';
+          state = 'swim';
+          render(undefined, false);
+        }, 1200);
+        setTimeout(moveFish, moveDuration + delayDuration);
+        return;
+      }
+
+      position = nextPosition;
+      render(moveDuration, true);
+      setTimeout(moveFish, moveDuration + delayDuration);
+    };
+
+    const render = (moveDuration?: number, updatePosition?: boolean) => {
+      if (moveDuration) {
+        $fishContainer.style.setProperty('--move-duration', `${moveDuration}ms`);
+      }
+      if (state === 'swim') {
+        $fish.classList.add('fish-swim');
+        $fish.classList.remove('fish-turn');
+      } else {
+        $fish.classList.add('fish-turn');
+        $fish.classList.remove('fish-swim');
+      }
+      $fishContainer.classList.toggle('scale-x-[-1]', facing === 'r');
+      if (updatePosition !== false) {
+        $fishContainer.style.left = `${position.x}px`;
+        $fishContainer.style.top = `${position.y}px`;
+      }
+    };
+
+    render();
+    const delay = randBetween(100, 2500);
+    setTimeout(() => {
+      moveFish();
+    }, delay);
+
+    $fishContainer.appendChild($fish);
+    $fish.addEventListener('click', () => {
+      $fish.classList.add('border');
+      setTimeout(() => $fish.classList.remove('border'), 500);
+
+      addToTank({
+        type: option.type,
+        domOrder: tankPopulation[option.type]! % 2 ? 'last' : 'first',
+        facing,
+        position: {
+          x: $fishContainer.offsetLeft,
+          y: $fishContainer.offsetTop,
+        },
+        additionalMoveDelay: option.additionalMoveDelay,
+      });
+    });
+
+    if (option.domOrder === 'first') {
+      $tank.prepend($fishContainer);
+    } else {
+      $tank.append($fishContainer);
+    }
+  };
+</script>
