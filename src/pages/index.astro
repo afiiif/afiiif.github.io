@@ -142,10 +142,7 @@ const products = [
     <li>jQuery</li>
     <li>Tailwind</li>
     <li>Ant Design</li>
-    <li class="css-animation">
-      <span>CSS</span>
-      <span>Animation</span>
-    </li>
+    <li class="css-animation">CSS <span>Animation</span></li>
     <li>TanStack-Query</li>
     <li>SQL</li>
     <li>Python</li>
@@ -207,77 +204,49 @@ const products = [
   }
 
   .css-animation {
-    overflow: hidden;
+    @apply relative overflow-hidden;
+    &::after {
+      @apply block content-[""] absolute top-[-100%] -left-full w-[100%] h-[300%] -rotate-45;
+      background: radial-gradient(rgba(253, 230, 138, 0.2), transparent 80%);
+      animation: cssAnimationShiny 12s linear infinite;
+    }
     > span {
-      position: relative;
-      &:nth-child(1) {
-        color: #e2e8f0;
-        text-shadow:
-          #e2e8f0 7.25em 0,
-          #e2e8f0 14.5em 0,
-          #e2e8f0 21.75em 0,
-          #e2e8f0 29em 0;
-        animation: cssAnimation1 12s linear infinite;
-      }
-      &:nth-child(2) {
-        color: #60a5fa;
-        text-shadow:
-          #60a5fa 7.25em 0,
-          #a3e635 14.5em 0,
-          #60a5fa 21.75em 0,
-          #a3e635 29em 0;
-        animation: cssAnimation2 12s linear infinite;
-      }
+      @apply relative inline-block;
+      text-shadow:
+        #38bdf8 0 -1.5em,
+        #e2e8f0 0 -3em;
+      animation: cssAnimationMoveUpDown 12s linear infinite;
     }
   }
-  @keyframes cssAnimation1 {
+  @keyframes cssAnimationShiny {
     0% {
-      left: 0em;
+      left: -100%;
+    }
+    90% {
+      left: -100%;
     }
     100% {
-      left: -21.75em;
+      left: 100%;
     }
   }
-  @keyframes cssAnimation2 {
+  @keyframes cssAnimationMoveUpDown {
     0% {
-      color: #60a5fa;
-      left: 0em;
+      top: 0em;
     }
-    20% {
-      color: #a3e635;
-      text-shadow:
-        #a3e635 7.25em 0,
-        #60a5fa 14.5em 0,
-        #a3e635 21.75em 0,
-        #60a5fa 29em 0;
+    35% {
+      top: 0em;
     }
-    40% {
-      color: #60a5fa;
-      text-shadow:
-        #60a5fa 7.25em 0,
-        #a3e635 14.5em 0,
-        #60a5fa 21.75em 0,
-        #a3e635 29em 0;
+    37.5% {
+      top: 1.5em;
     }
-    60% {
-      color: #a3e635;
-      text-shadow:
-        #a3e635 7.25em 0,
-        #60a5fa 14.5em 0,
-        #a3e635 21.75em 0,
-        #60a5fa 29em 0;
+    55% {
+      top: 1.5em;
     }
-    80% {
-      color: #60a5fa;
-      text-shadow:
-        #60a5fa 7.25em 0,
-        #a3e635 14.5em 0,
-        #60a5fa 21.75em 0,
-        #a3e635 29em 0;
+    57.5% {
+      top: 3em;
     }
     100% {
-      color: #a3e635;
-      left: -21.75em;
+      top: 3em;
     }
   }
 </style>
