@@ -142,7 +142,10 @@ const products = [
     <li>jQuery</li>
     <li>Tailwind</li>
     <li>Ant Design</li>
-    <li>CSS Animation</li>
+    <li class="css-animation">
+      <span>CSS</span>
+      <span>Animation</span>
+    </li>
     <li>TanStack-Query</li>
     <li>SQL</li>
     <li>Python</li>
@@ -200,6 +203,81 @@ const products = [
     }
     to {
       opacity: 100%;
+    }
+  }
+
+  .css-animation {
+    overflow: hidden;
+    > span {
+      position: relative;
+      &:nth-child(1) {
+        color: #e2e8f0;
+        text-shadow:
+          #e2e8f0 7.25em 0,
+          #e2e8f0 14.5em 0,
+          #e2e8f0 21.75em 0,
+          #e2e8f0 29em 0;
+        animation: cssAnimation1 12s linear infinite;
+      }
+      &:nth-child(2) {
+        color: #60a5fa;
+        text-shadow:
+          #60a5fa 7.25em 0,
+          #a3e635 14.5em 0,
+          #60a5fa 21.75em 0,
+          #a3e635 29em 0;
+        animation: cssAnimation2 12s linear infinite;
+      }
+    }
+  }
+  @keyframes cssAnimation1 {
+    0% {
+      left: 0em;
+    }
+    100% {
+      left: -21.75em;
+    }
+  }
+  @keyframes cssAnimation2 {
+    0% {
+      color: #60a5fa;
+      left: 0em;
+    }
+    20% {
+      color: #a3e635;
+      text-shadow:
+        #a3e635 7.25em 0,
+        #60a5fa 14.5em 0,
+        #a3e635 21.75em 0,
+        #60a5fa 29em 0;
+    }
+    40% {
+      color: #60a5fa;
+      text-shadow:
+        #60a5fa 7.25em 0,
+        #a3e635 14.5em 0,
+        #60a5fa 21.75em 0,
+        #a3e635 29em 0;
+    }
+    60% {
+      color: #a3e635;
+      text-shadow:
+        #a3e635 7.25em 0,
+        #60a5fa 14.5em 0,
+        #a3e635 21.75em 0,
+        #60a5fa 29em 0;
+    }
+    80% {
+      color: #60a5fa;
+      text-shadow:
+        #60a5fa 7.25em 0,
+        #a3e635 14.5em 0,
+        #60a5fa 21.75em 0,
+        #a3e635 29em 0;
+    }
+    100% {
+      color: #a3e635;
+      left: -21.75em;
     }
   }
 </style>
