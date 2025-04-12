@@ -106,7 +106,35 @@ const products = [
     <h2>FEATURED PROJECTS</h2>
     <div class="h-px bg-neutral-500 flex-1"></div>
   </div>
+
   <Products products={products} />
+
+  <section class="pt-10 pb-1">
+    <h3 class="font-semibold text-lg mr-1">Packages / Libraries</h3>
+    <p class="text-sm pt-1.5 pb-4 text-neutral-400 font-light">
+      Some random side-quests in my dev journey.
+    </p>
+    <div class="rounded-lg border border-neutral-700 divide-y divide-neutral-700 overflow-hidden">
+      <a class="block hover:bg-neutral-900 px-5 py-3.5" href="https://floppy-disk.vercel.app">
+        <span class="flex justify-between">
+          <div class="font-medium">💾 FloppyDisk.js</div>
+          <div class="text-sm text-neutral-400 font-light">Aug 2023</div>
+        </span>
+        <div class="text-sm text-neutral-400 font-light">State management</div>
+      </a>
+      <a
+        class="block hover:bg-neutral-900 px-5 py-3.5"
+        href="https://afiiif.github.io/dom-dom-factory"
+      >
+        <span class="flex justify-between">
+          <div class="font-medium">🏭 Dom Dom Factory</div>
+          <div class="text-sm text-neutral-400 font-light">Aug 2024</div>
+        </span>
+        <div class="text-sm text-neutral-400 font-light">DOM manipulation</div>
+      </a>
+    </div>
+  </section>
+
   <section class="pt-10 pb-1">
     <div class="sm:flex sm:items-center sm:justify-between">
       <h3 class="inline font-semibold text-lg mr-1">Insaniquarium Fun Project</h3>
