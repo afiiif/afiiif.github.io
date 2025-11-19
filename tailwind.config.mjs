@@ -7,6 +7,10 @@ export default {
         pixel:
           '"Micro 5", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
       },
+      fontSize: {
+        13: ['0.8125rem', '1.2rem'],
+        15: ['0.9375rem', '1.375rem'],
+      },
     },
   },
   plugins: [],
