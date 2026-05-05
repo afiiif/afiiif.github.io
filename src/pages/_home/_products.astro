@@ -81,7 +81,7 @@ const { products } = Astro.props;
             ) : (
               <img
                 src={
-                  product.preview.src.startsWith('http')
+                  product.preview.src.startsWith('http') || product.preview.src.startsWith('/img/')
                     ? product.preview.src
                     : `${assetsUrl}/${product.preview.src}`
                 }
