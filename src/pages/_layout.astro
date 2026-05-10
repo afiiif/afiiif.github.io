@@ -1,6 +1,6 @@
 ---
-import '@fontsource/micro-5';
-import fontMicro5 from '@fontsource/micro-5/files/micro-5-latin-400-normal.woff2?url';
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
 
 interface Props {
   title: string;
@@ -25,8 +25,6 @@ const { title, description } = Astro.props;
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <meta name="theme-color" content="#131314" />
     <base href={`${Astro.url.origin}/`} />
-
-    <link rel="preload" as="font" type="font/woff2" href={fontMicro5} crossorigin="anonymous" />
 
     <slot name="head" />
   </head>

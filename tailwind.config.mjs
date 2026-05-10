@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        pixel:
-          '"Micro 5", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+        sans: `"Inter Variable",ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"`,
+        mono: `"JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace`,
       },
       fontSize: {
         13: ['0.8125rem', '1.2rem'],

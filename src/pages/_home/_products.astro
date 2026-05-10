@@ -38,14 +38,14 @@ const { products } = Astro.props;
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            class="[&:hover_h3]:underline [&:hover_h3]:decoration-dashed [&:hover_h3]:decoration-blue-400 inline-block -my-1 py-1 mr-1"
+            class="[&:hover_h3]:underline [&:hover_h3]:decoration-dashed [&:hover_h3]:decoration-blue-400 inline-block -my-1 py-1 mr-1.5"
           >
             <h3 class="inline font-semibold text-lg">{product.name}</h3>{' '}
             <svg width="16" height="16" class="inline w-4 h-4 relative -top-0.5 text-blue-400">
               <use href="#arrow-right-top" />
             </svg>
           </a>
-          <div class="text-sm bg-neutral-800 text-white inline-block rounded-md px-2 py-0.5">
+          <div class="bg-neutral-800 text-white inline-block rounded-md px-2 py-0.5 font-mono text-13">
             {product.dateInfo}
           </div>
         </div>
