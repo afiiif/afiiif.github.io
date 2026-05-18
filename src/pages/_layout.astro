@@ -1,0 +1,54 @@
+---
+import '../styles/global.css';
+
+import { Font } from 'astro:assets';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta property="og:title" content={title} />
+    <meta name="twitter:title" content={title} />
+    <meta name="description" content={description} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta name="theme-color" content="#131314" />
+    <base href={`${Astro.url.origin}/`} />
+
+    <Font cssVariable="--font-inter" preload />
+    <Font cssVariable="--font-jetbrains" preload />
+
+    <slot name="head" />
+  </head>
+
+  <body class="text-15">
+    <main
+      class:list={[
+        'px-5 py-14 sm:px-6 md:pt-16 md:pb-24',
+        'mx-auto max-w-2xl transition-[padding]',
+      ]}
+    >
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  body {
+    color: #e2e8f0;
+    background: #131314;
+  }
+</style>

@@ -1,21 +1,308 @@
 ---
-import '../styles/global.css';
+import Layout from './_layout.astro';
 
-import { Font } from 'astro:assets';
+import Products from './_home/_products.astro';
+import FishTank from './_home/_fish-tank.astro';
+
+const products = [
+  {
+    href: 'https://pokemon-awesome.vercel.app/',
+    name: 'Pokémon Awesome',
+    desc: 'Rank #2 on Google when you search for "compare pokemons".',
+    dateInfo: 'Jul 2024',
+    preview: { src: 'pokemon-awesome.webp', width: 600, height: 379 },
+    previewPlaceholder: { src: 'pokemon-awesome-placeholder.webp', width: 500, height: 316 },
+  },
+  {
+    href: 'statistiku',
+    name: 'Statistiku',
+    desc: 'An innovative web-based statistics tool, showcasing my proficiency in math, statistics, & programming. Yes, it really is from more than 7 years ago, built before AI era.',
+    dateInfo: 'Mar 2019',
+    preview: { src: 'statistiku.webp', width: 600, height: 379 },
+    previewPlaceholder: { src: 'statistiku-placeholder.webp', width: 500, height: 316 },
+  },
+  {
+    href: 'https://floppy-disk.vercel.app/',
+    name: 'FloppyDisk.ts (NPM Library)',
+    desc: 'Lightweight, simple, and powerful state management library for React.js. It has the capability to replace both Zustand & TanStack Query!! 🤯',
+    dateInfo: 'Apr 2026',
+    preview: { src: 'floppy-disk-ts.jpg', width: 800, height: 420 },
+  },
+  {
+    href: 'https://www.youtube.com/@afifu',
+    name: 'YouTube.com/@afifu',
+    desc: 'Well-animated educational contents on software engineering.',
+    dateInfo: '2021-2023',
+    preview: { src: 'afif-youtube-channel-2605.webp', width: 800, height: 521 },
+  },
+  {
+    href: 'https://isosehat.netlify.app/?source=afiiif.github.io',
+    name: 'Healthcare 🤝 Isochrone',
+    desc: 'An interactive GIS web app that integrates OpenStreetMap, OpenRoute Service, and WorldPop Hub data to analyze healthcare facilities accessibility using isochrones.',
+    dateInfo: 'Oct 2024',
+    preview: { src: '/img/healthcare-isochrone.webp', width: 870, height: 540 },
+  },
+  {
+    href: 'https://marketplace.visualstudio.com/items?itemName=afifu.vscode-js-ts-react-nextjs-snippets',
+    name: 'JS/TS React/Next.js Snippets',
+    desc: 'Productivity VSCode extension (12K+ installs).',
+    dateInfo: 'May 2023',
+    preview: { src: 'vscode-js-ts-snippets.webp', width: 680, height: 306 },
+  },
+  {
+    href: 'https://afiiif.github.io/family-tree',
+    name: 'Family Tree App',
+    desc: 'Free family tree app, no installation, no ads, no login required, everything saved locally.',
+    dateInfo: 'Apr 2026',
+    preview: { src: 'family-tree.webp', width: 960, height: 659 },
+  },
+  {
+    href: 'kode-wilayah-dan-pos',
+    name: 'KodeWilayah',
+    desc: 'The simplest website to search Indonesian region code & postal code.',
+    dateInfo: 'Jun 2024',
+    preview: { src: '/img/kode-wilayah-dan-pos.gif', width: 600, height: 361 },
+  },
+  {
+    href: 'https://www.youtube.com/watch?v=q7Lbn_JtLdw',
+    name: 'BagiTugas (BPS)',
+    desc: "Crafted an app from scratch using Bootstrap, PHP, and SQLite, which significantly improved the efficiency and speed of my coworker's workflow.",
+    dateInfo: 'Jul 2020',
+    preview: { src: 'bagitugas.png', width: 850, height: 403 },
+  },
+  {
+    href: 'spk',
+    name: 'National Standard Industrial Classification',
+    desc: 'Industrial classification code & definition used by BPS (national statistics office).\nNo fancy tech-stacks, just a solution to a REAL problem.',
+    dateInfo: 'Jun 2020',
+    preview: { src: 'spk.webp', width: 600, height: 379 },
+  },
+];
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
-    <Font cssVariable="--font-inter" preload />
-    <Font cssVariable="--font-jetbrains" preload />
-  </head>
-  <body>
-    <h1 class="bg-yellow-300 p-4">Astro</h1>
-  </body>
-</html>
+<Layout
+  title="Muhammad Afifudin"
+  description="Muhammad Afifudin, a software engineer, designer, content creator, ex-statistician."
+>
+  <Fragment slot="head">
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href={`/img/${products[0].previewPlaceholder!.src}`}
+    />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href={`/img/${products[1].previewPlaceholder!.src}`}
+    />
+  </Fragment>
+
+  <h1 class="font-bold text-2xl sm:text-3xl">Muhammad Afifudin</h1>
+  <div class="pt-1 text-neutral-400 uppercase font-mono tracking-widest text-13 sm:text-15">
+    Full-Stack Software Engineer
+  </div>
+
+  <p class="pt-9">
+    I love creating digital products that bring real value to people, & sometimes dive into unique
+    projects just for fun. I bring together technical precision & creative vision.
+  </p>
+  <p class="pt-4">
+    Frontend, backend, web/mobile? Been there, done that. Built many kinds of projects, solved
+    countless challenges, and learned a ton along the way.
+  </p>
+  <!-- <p class="pt-4">I'm a professional remote worker, and usually not interested in on-site job.</p> -->
+
+  <h2 class="mt-24">FEATURED PROJECTS</h2>
+
+  <Products products={products} />
+
+  <section class="pt-11 pb-3 sm:pb-6">
+    <div class="sm:flex sm:items-center sm:justify-between">
+      <h3 class="inline font-semibold text-lg mr-1.5">Insaniquarium Fun Project</h3>
+      <div class="bg-neutral-800 text-white inline-block rounded-md px-2 py-0.5 font-mono text-13">
+        Sep 2024
+      </div>
+    </div>
+    <p class="text-sm pt-1.5 pb-4 text-neutral-400 font-light">
+      Take a moment to relax, unwind, and watch the fish.
+    </p>
+    <FishTank />
+    <p class="text-xs text-neutral-400 pt-2 italic font-light">
+      Fan-made project, no commercial purpose. All credit for characters goes to their creators.
+    </p>
+  </section>
+
+  <h2 class="mt-24">SKILLS</h2>
+  <ul class="pt-8 flex flex-wrap gap-2 items-center skill-tags">
+    <li>JavaScript</li>
+    <li>TypeScript</li>
+    <li>Node.js</li>
+    <li>Next JS</li>
+    <li>Astro JS</li>
+    <li>Svelte</li>
+    <li>Vanilla JS</li>
+    <li>jQuery</li>
+    <li>Tailwind</li>
+    <li>Ant Design</li>
+    <li class="css-animation">CSS <span>Animation</span></li>
+    <li>TanStack-Query</li>
+    <li>GraphQL</li>
+    <li>SQL</li>
+    <li>Python</li>
+    <li>Data Visualization</li>
+    <li>GIS</li>
+    <li class="text-neutral-400">and many more...</li>
+  </ul>
+
+  <h2 class="mt-24">LINKS</h2>
+  <ul
+    class:list={[
+      'pt-7',
+      '[&_a]:inline-block [&_a]:py-1',
+      '[&_a:hover]:underline [&_a:hover]:decoration-dashed [&_a:hover]:decoration-blue-400',
+      '[&_span]:text-neutral-400 [&_span]:ml-[3px]',
+    ]}
+  >
+    <li>
+      <a href="mailto:afiiifudin@gmail.com">afiiifudin@gmail.com &nbsp;📬</a>
+    </li>
+    <li>
+      <a href="https://www.linkedin.com/in/m-afifudin/">linkedin.com<span>/m-afifudin</span></a>
+    </li>
+    <li>
+      <a href="https://github.com/afiiif">github.com<span>/afiiif</span></a>
+    </li>
+    <li>
+      <a href="https://x.com/digimushrm">x.com<span>/digimushrm</span></a>
+    </li>
+    <li>
+      <a href="https://youtube.com/@afifu">youtube.com<span>/@afifu</span></a>
+    </li>
+  </ul>
+
+  <div class="pb-12"></div>
+
+  <svg class="hidden">
+    <symbol
+      id="arrow-right-top"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      data-slot="icon"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M15.75 2.25H21a.75.75 0 0 1 .75.75v5.25a.75.75 0 0 1-1.5 0V4.81L8.03 17.03a.75.75 0 0 1-1.06-1.06L19.19 3.75h-3.44a.75.75 0 0 1 0-1.5Zm-10.5 4.5a1.5 1.5 0 0 0-1.5 1.5v10.5a1.5 1.5 0 0 0 1.5 1.5h10.5a1.5 1.5 0 0 0 1.5-1.5V10.5a.75.75 0 0 1 1.5 0v8.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V8.25a3 3 0 0 1 3-3h8.25a.75.75 0 0 1 0 1.5H5.25Z"
+        clip-rule="evenodd"></path>
+    </symbol>
+  </svg>
+</Layout>
+
+<style is:global>
+  @reference '../styles/global.css';
+
+  a {
+    @apply decoration-dashed;
+  }
+
+  h2 {
+    @apply font-mono tracking-widest text-neutral-400 text-13 sm:text-15 relative;
+    &::before {
+      content: '';
+      @apply absolute -left-5 w-2 h-full bg-neutral-500 md:-left-6;
+    }
+  }
+
+  .skill-tags > li:not(:last-child) {
+    @apply bg-neutral-800 px-2 py-1 rounded-md font-mono text-13;
+  }
+
+  .appear {
+    opacity: 0;
+    animation: appear 0.5s linear 0.7s forwards;
+  }
+  @keyframes appear {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 100%;
+    }
+  }
+
+  .css-animation {
+    @apply relative overflow-hidden;
+    &::after {
+      @apply block content-[""] absolute top-[-100%] -left-full w-[100%] h-[300%] -rotate-45;
+      background: radial-gradient(rgba(253, 230, 138, 0.2), transparent 80%);
+      animation: cssAnimationShiny 12s linear infinite;
+    }
+    > span {
+      @apply relative inline-block;
+      text-shadow:
+        #38bdf8 0 -1.5em,
+        #e2e8f0 0 -3em;
+      animation: cssAnimationMoveUpDown 12s linear infinite;
+    }
+  }
+  @keyframes cssAnimationShiny {
+    0% {
+      left: -100%;
+    }
+    90% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+  @keyframes cssAnimationMoveUpDown {
+    0% {
+      top: 0em;
+    }
+    35% {
+      top: 0em;
+    }
+    37.5% {
+      top: 1.5em;
+    }
+    55% {
+      top: 1.5em;
+    }
+    57.5% {
+      top: 3em;
+    }
+    100% {
+      top: 3em;
+    }
+  }
+</style>
+
+<script>
+  const assetsUrl =
+    process.env.NODE_ENV === 'development'
+      ? 'img'
+      : 'https://afif-assets.pages.dev/afiiif_github_io/v1';
+
+  setTimeout(() => {
+    fetch(`${assetsUrl}/pokemon-awesome.webp`).then((res) => {
+      res.blob().then((imgBlob) => {
+        const $img = document.getElementById('img-0') as HTMLImageElement;
+        $img.src = URL.createObjectURL(imgBlob);
+        $img.nextElementSibling!.remove();
+      });
+    });
+  }, 500);
+
+  setTimeout(() => {
+    fetch(`${assetsUrl}/statistiku.webp`).then((res) => {
+      res.blob().then((imgBlob) => {
+        const $img = document.getElementById('img-1') as HTMLImageElement;
+        $img.src = URL.createObjectURL(imgBlob);
+        $img.nextElementSibling!.remove();
+      });
+    });
+  }, 1600);
+</script>
