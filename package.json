@@ -2,23 +2,18 @@
   "name": "afiiif.github.io",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "dev": "astro dev --host",
-    "start": "astro dev",
-    "build": "astro check && astro build",
+    "dev": "astro dev",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.8.1",
-    "@astrojs/tailwind": "^5.1.0",
-    "@fontsource-variable/inter": "^5.2.8",
-    "@fontsource-variable/jetbrains-mono": "^5.2.8",
-    "astro": "^4.11.5",
-    "tailwindcss": "^3.4.4",
-    "typescript": "^5.5.3"
-  },
-  "devDependencies": {
-    "@types/node": "^22.0.0"
+    "@tailwindcss/vite": "^4.3.0",
+    "astro": "^6.3.3",
+    "tailwindcss": "^4.3.0"
   }
 }
