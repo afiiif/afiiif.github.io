@@ -1,10 +1,28 @@
-import { defineConfig } from 'astro/config';
+// @ts-check
+import { defineConfig, fontProviders } from 'astro/config';
 
-import tailwind from '@astrojs/tailwind';
+import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  // site: 'http://localhost:4321',
   site: 'https://afiiif.github.io',
-  integrations: [tailwind()],
+  vite: {
+    plugins: [tailwindcss()],
+  },
+  fonts: [
+    {
+      provider: fontProviders.fontsource(),
+      name: 'Inter',
+      cssVariable: '--font-inter',
+      weights: ['100 900'],
+      styles: ['normal'],
+    },
+    {
+      provider: fontProviders.fontsource(),
+      name: 'JetBrains Mono',
+      cssVariable: '--font-jetbrains',
+      weights: ['100 900'],
+      styles: ['normal'],
+    },
+  ],
 });
