@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+
+import { Font } from 'astro:assets';
 ---
 
 <html lang="en">
@@ -10,6 +12,8 @@ import '../styles/global.css';
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>Astro</title>
+    <Font cssVariable="--font-inter" preload />
+    <Font cssVariable="--font-jetbrains" preload />
   </head>
   <body>
     <h1 class="bg-yellow-300 p-4">Astro</h1>
