@@ -12,8 +12,10 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/mdx": "^5.0.6",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.3.3",
+    "astro-expressive-code": "^0.42.0",
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {

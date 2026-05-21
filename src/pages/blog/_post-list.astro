@@ -1,0 +1,41 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+import Tags from './_tags.astro';
+
+interface Props {
+  posts: Array<CollectionEntry<'blog'>>;
+}
+const { posts } = Astro.props;
+const sortedPosts = [...posts].sort(
+  (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime(),
+);
+---
+
+<ul class="py-4 -mx-3">
+  {
+    sortedPosts.map((post, i) => {
+      const publishedDate = [
+        post.data.publishDate.getFullYear(),
+        String(post.data.publishDate.getMonth() + 1).padStart(2, '0'),
+      ].join(' / ');
+      return (
+        <li class:list={['py-1.5 border-b border-neutral-800', i === 0 && 'border-t']}>
+          <a
+            href={`/blog/${post.id}`}
+            class="block sm:flex py-6 px-3 hover:bg-neutral-900 rounded-lg"
+          >
+            <span class="sm:w-27 text-neutral-400 font-extralight text-xs sm:text-sm sm:pt-0.5 tabular-nums">
+              {publishedDate}
+            </span>
+            <div class="flex-1 font-medium pt-2 sm:pt-0">
+              <div class="text-base">{post.data.title}</div>
+              {!!post.data.tags?.length && <div class="h-10 sm:h-9" />}
+            </div>
+          </a>
+          <Tags tags={post.data.tags} className="-mt-12 pb-6 pl-3 sm:ml-27" />
+        </li>
+      );
+    })
+  }
+</ul>

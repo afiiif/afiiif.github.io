@@ -1,0 +1,93 @@
+---
+import { getCollection, render } from 'astro:content';
+
+import Layout from '../_layout.astro';
+import Tags from './_tags.astro';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog');
+  return blogEntries.map((entry) => ({
+    params: { slug: entry.id },
+    props: entry,
+  }));
+}
+
+const { Content } = await render(Astro.props);
+const { data } = Astro.props;
+
+const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(data.publishDate);
+---
+
+<Layout title={data.title} description={data.description || data.title} ogImage={data.ogImage}>
+  <h1 class="font-bold text-2xl sm:text-3xl mb-2 text-balance">{data.title}</h1>
+  <div class="text-13 text-neutral-500 flex gap-2 pb-5 font-mono">
+    <a href="/" class="no-underline hover:text-neutral-400">Afifudin</a>
+    <div>·</div>
+    <div>{formattedPublishDate}</div>
+  </div>
+  <Content />
+  <Tags tags={data.tags} className="border-t border-neutral-800 pt-4 mt-16" />
+</Layout>
+
+<script>
+  const $headings = document.querySelectorAll('h2,h3') as any as HTMLHeadingElement[];
+  $headings.forEach(($heading) => {
+    const $a = document.createElement('a');
+    $a.ariaHidden = 'true';
+    $a.tabIndex = -1;
+    $a.href = location.pathname + '#' + $heading.id;
+    $a.textContent = '#';
+    $heading.insertAdjacentElement('afterbegin', $a);
+  });
+</script>
+
+<style is:global>
+  @reference '../../styles/global.css';
+
+  h2[id],
+  h3[id] {
+    @apply relative;
+    > a {
+      @apply text-neutral-500 hover:text-blue-400 font-light;
+      @apply invisible absolute -left-4 w-5 no-underline text-[.85em] pt-[.125em];
+      @apply md:-left-6 md:w-7 md:text-[1em] md:pt-0;
+    }
+    &:hover > a {
+      @apply visible;
+    }
+  }
+
+  h2 {
+    @apply font-bold text-xl border-b border-b-neutral-800 pb-1.5 pt-14 mb-6;
+  }
+  h3 {
+    @apply font-bold text-lg mt-6 mb-5;
+  }
+
+  p {
+    @apply my-5 text-neutral-300;
+    a {
+      @apply text-blue-400 underline;
+    }
+    code {
+      @apply bg-neutral-700 text-white rounded-md inline-block px-1.5 mx-0.5 text-sm;
+    }
+  }
+
+  ul {
+    @apply list-disc pl-6 text-neutral-300;
+    li {
+      @apply py-1;
+      li:first-child {
+        @apply pt-2;
+      }
+    }
+    a {
+      @apply text-blue-400 underline;
+    }
+  }
+</style>

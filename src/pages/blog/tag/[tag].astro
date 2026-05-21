@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+
+import Layout from '../../_layout.astro';
+import PostList from '../_post-list.astro';
+
+export async function getStaticPaths() {
+  const blogPosts = await getCollection('blog');
+
+  const tagsSet = new Set<string>();
+  const paths = [];
+
+  for (const post of blogPosts) {
+    if (!post.data.tags) continue;
+    for (const tag of post.data.tags) {
+      if (!tagsSet.has(tag)) {
+        tagsSet.add(tag);
+        paths.push({ params: { tag } });
+      }
+    }
+  }
+
+  return paths;
+}
+
+const { tag } = Astro.params;
+const blogPostsForCurrentTag = (await getCollection('blog')).filter((post) =>
+  post.data.tags?.includes(tag),
+);
+---
+
+<Layout title={`Afifudin's Blog (#${tag})`} description="Muhammad Afifudin's blog posts">
+  <div class="-mt-3"></div>
+  <a href="/blog" class="text-sm text-blue-400 group">
+    ← <span class="group-hover:underline group-hover:decoration-dashed">Back to all posts</span>
+  </a>
+  <h1 class="font-bold text-2xl sm:text-3xl pb-5 pt-6">
+    <span class="opacity-40 mr-0.5">#</span>{tag}
+  </h1>
+
+  <PostList posts={blogPostsForCurrentTag} />
+</Layout>
