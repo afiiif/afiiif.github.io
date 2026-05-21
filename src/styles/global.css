@@ -10,3 +10,19 @@
   --text-15: 0.9375rem;
   --text-15--line-height: 1.375rem;
 }
+
+@layer base {
+  body {
+    color: #e2e8f0;
+    background: #131314;
+  }
+}
+
+@layer components {
+  .hover-dashed {
+    @apply no-underline decoration-blue-400;
+    &:hover {
+      @apply underline decoration-dashed;
+    }
+  }
+}
