@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://afiiif.github.io/sitemap-index.xml
