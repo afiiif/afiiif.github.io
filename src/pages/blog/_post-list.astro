@@ -20,7 +20,7 @@ const sortedPosts = [...posts].sort(
         String(post.data.publishDate.getMonth() + 1).padStart(2, '0'),
       ].join(' / ');
       return (
-        <li class:list={['py-1.5 border-b border-neutral-800', i === 0 && 'border-t']}>
+        <li class:list={['py-1.5 border-b border-neutral-800 relative', i === 0 && 'border-t']}>
           <a
             href={`/blog/${post.id}`}
             class="block sm:flex py-6 px-3 hover:bg-neutral-900 rounded-lg"
@@ -30,10 +30,23 @@ const sortedPosts = [...posts].sort(
             </span>
             <div class="flex-1 font-medium pt-2 sm:pt-0">
               <div class="text-base">{post.data.title}</div>
-              {!!post.data.tags?.length && <div class="h-10 sm:h-9" />}
+              {!!post.data.tags?.length && (
+                <div class="flex gap-1.5 flex-wrap text-13 sm:text-sm font-light font-mono invisible mt-4 sm:mt-3.5">
+                  {post.data.tags.map((tag) => (
+                    <div
+                      class:list={[
+                        'rounded-md bg-neutral-800 text-neutral-300 px-1.5 py-0.5',
+                        'hover:text-blue-400',
+                      ]}
+                    >
+                      #{tag}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </a>
-          <Tags tags={post.data.tags} className="-mt-12 pb-6 pl-3 sm:ml-27" />
+          <Tags tags={post.data.tags} className="absolute bottom-1.5 mb-6 px-3 sm:ml-27" />
         </li>
       );
     })
