@@ -6,9 +6,11 @@ import { Font } from 'astro:assets';
 interface Props {
   title: string;
   description: string;
+  ogImage?: string;
   className?: string;
 }
-const { title, description, className } = Astro.props;
+const { title, description, ogImage, className } = Astro.props;
+const { pathname } = Astro.url;
 ---
 
 <html lang="en">
@@ -25,6 +27,17 @@ const { title, description, className } = Astro.props;
     <meta name="description" content={description} />
     <meta property="og:description" content={description} />
     <meta name="twitter:description" content={description} />
+
+    {
+      ogImage && (
+        <>
+          <meta property="og:image" content={ogImage} />
+          <meta property="twitter:card" content={ogImage} />
+          <meta property="twitter:image" content={ogImage} />
+        </>
+      )
+    }
+
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <meta name="theme-color" content="#131314" />
     <base href={`${Astro.url.origin}/`} />
@@ -36,9 +49,39 @@ const { title, description, className } = Astro.props;
   </head>
 
   <body class="text-15">
+    <nav
+      class:list={[
+        'flex justify-end text-sm pb-8 pt-2 text-neutral-400',
+        'mx-auto max-w-2xl px-5 sm:px-6',
+        'md:pt-4 transition-[padding]',
+      ]}
+    >
+      <a
+        href="/"
+        class:list={[
+          'block rounded-md px-3 py-2',
+          'hover:text-white',
+          pathname === '/' && 'underline',
+        ]}
+      >
+        Home
+      </a>
+      <a
+        href="/blog"
+        class:list={[
+          'block rounded-md px-3 py-2',
+          'hover:text-white',
+          pathname.startsWith('/blog') && 'underline',
+          '-mr-3',
+        ]}
+      >
+        Blog
+      </a>
+    </nav>
+
     <main
       class:list={[
-        'px-5 py-14 sm:px-6 md:pt-16 md:pb-24',
+        'px-5 pb-14 sm:px-6 md:pb-24',
         'mx-auto max-w-2xl transition-[padding]',
         className,
       ]}

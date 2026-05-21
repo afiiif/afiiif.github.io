@@ -1,0 +1,31 @@
+---
+interface Props {
+  tags?: string[];
+  className?: string | string[];
+}
+const { tags, className } = Astro.props;
+---
+
+{
+  !!tags?.length && (
+    <div
+      class:list={[
+        'flex gap-1.5 flex-wrap text-sm font-light font-mono',
+        'pointer-events-none *:pointer-events-auto',
+        className,
+      ]}
+    >
+      {tags.map((tag) => (
+        <a
+          href={`/blog/tag/${tag}`}
+          class:list={[
+            'rounded-md bg-neutral-800 text-neutral-300 px-1.5 py-0.5',
+            'hover:text-blue-400',
+          ]}
+        >
+          #{tag}
+        </a>
+      ))}
+    </div>
+  )
+}
