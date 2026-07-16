@@ -39,7 +39,9 @@ function App() {
 }
 ```
 
-<p class="p mt-5 mb-1.5!">Suppose:</p>
+Suppose:
+
+<div class="-mt-4" />
 
 - `Layout` consumes the theme.
 - `Footer` contains a theme toggle button that updates the theme.
@@ -56,8 +58,8 @@ Many developers<sup>\*</sup> immediately blame React Context.
 But React Context isn't the problem here.
 
 The problem is that the state lives inside `App`, and `App` is responsible for rendering `Nav` and `Content`.
+Whenever theme state changes, `App` re-renders.
 
-Whenever theme state changes, `App` re-renders.\
 Since `App` renders `Nav` and `Content`, they naturally re-render as well—even though they never read from the context.
 
 This is purely a composition problem.
@@ -65,7 +67,6 @@ This is purely a composition problem.
 ## A Better Composition
 
 The fix is surprisingly simple.
-
 Move the state into a dedicated provider component so that unrelated components are no longer rendered by the component that owns the state.
 
 ```jsx
@@ -96,8 +97,7 @@ function App() {
 
 Now `Nav` and `Content` no longer re-render when the theme changes.
 
-Why?
-
+Why?\
 Because the state now lives inside `ThemeProvider`, and `ThemeProvider` only re-renders the `ThemeContext.Provider`. The `children` are passed through as-is rather than being recreated by the component that owns the state.
 
 This is a much better composition and naturally avoids unnecessary re-renders.
@@ -134,11 +134,9 @@ function Providers({ children }) {
 ```
 
 Imagine a component that only reads the theme.
-
 Changing the language still causes that component to re-render because **the entire context value changes**.
 
 Unfortunately, `useMemo` doesn't solve this.
-
 Everything lives inside the same context, so every consumer receives the updated context value.
 
 If these pieces of state are unrelated, they simply shouldn't live in the same context.
@@ -170,8 +168,8 @@ function Providers({ children }) {
 ```
 
 At first glance this looks better.
-
-But it still suffers from the same problem.\
+However, it still suffers from the same problem.
+All three pieces of state still live inside the same component.
 Whenever **any** state changes, the `Providers` component re-renders.
 
 Since each provider creates a new object for its `value` prop, all three context values receive **new object references**. To avoid unnecessary updates, developers often end up memoizing every context value:
@@ -203,7 +201,6 @@ function Providers({ children }) {
 ```
 
 This works.
-
 But notice what happened, we had to add three separate `useMemo`s just to compensate for the component structure.
 
 Instead of fixing the symptom with memoization, we can eliminate the problem entirely by letting each provider own its own state.
@@ -263,8 +260,7 @@ function App() {
 }
 ```
 
-Now each provider re-renders independently.
-
+Now each provider re-renders independently.\
 Changing the theme doesn't recreate the language provider.\
 Changing the user doesn't recreate the theme provider.
 
@@ -281,6 +277,8 @@ Personally, I don't see a problem with that.\
 They're just composition.
 
 The important distinction is understanding the difference between:
+
+<div class="-mt-4" />
 
 - Components rendered by another component.
 - React elements passed as the `children` prop.
@@ -305,9 +303,10 @@ function App() {
 }
 ```
 
-Although this looks deeply nested, it isn't creating a long render chain.
-
+Although this looks deeply nested, it isn't creating a long render chain.\
 The render work is simply:
+
+<div class="-mt-4" />
 
 - `App` renders `Foo`
 - `App` renders `Bar`
@@ -315,8 +314,7 @@ The render work is simply:
 - `App` renders `Qux`
 - `App` renders `Content`
 
-The children are merely passed through each component.
-
+The children are merely passed through each component.\
 This is just composition.
 
 Now compare it with this:
@@ -343,9 +341,10 @@ function Qux() {
 }
 ```
 
-This creates an actual **render chain**.
-
+This creates an actual **render chain**.\
 The render flow becomes:
+
+<div class="-mt-4" />
 
 - `App` renders `Foo`
 - `Foo` renders `Bar`
@@ -365,8 +364,9 @@ This is fundamentally different from passing elements as `children`.
 Another misconception is treating React composition the same way as deeply nested HTML.
 
 Deep HTML trees can absolutely affect performance.
-
 More DOM nodes mean more work for the browser:
+
+<div class="-mt-4" />
 
 - Layout calculation
 - Paint
@@ -390,5 +390,4 @@ React Context isn't the villain.
 Most "React Context performance issues" are actually composition issues.
 
 Instead of immediately reaching for `useMemo`, `memo`, or other optimizations, take a step back and look at your component structure.
-
 A well-composed component tree naturally minimizes unnecessary re-renders.
