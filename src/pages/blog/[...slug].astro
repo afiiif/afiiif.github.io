@@ -62,7 +62,7 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
   }
 
   h2 {
-    @apply font-bold text-xl border-b border-b-neutral-800 pb-1.5 pt-14 mb-6;
+    @apply font-bold text-xl border-b border-b-neutral-800 pb-1.5 mt-14 mb-6;
   }
   h3 {
     @apply font-bold text-lg mt-6 mb-5;
@@ -73,8 +73,11 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
     a {
       @apply text-blue-400 underline;
     }
-    code {
-      @apply bg-neutral-700 text-white rounded-md inline-block px-1.5 mx-0.5 text-sm;
+  }
+  .p {
+    @apply text-neutral-300;
+    a {
+      @apply text-blue-400 underline;
     }
   }
 
@@ -89,5 +92,24 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
     a {
       @apply text-blue-400 underline;
     }
+  }
+
+  p,
+  li {
+    code {
+      @apply bg-neutral-700 text-white rounded-md inline-block px-1.5 mx-0.5;
+      @apply text-sm font-extralight;
+    }
+  }
+
+  blockquote {
+    @apply pl-3 border-l-4 text-neutral-600;
+    p {
+      @apply text-neutral-400;
+    }
+  }
+
+  .expressive-code pre > code {
+    @apply text-13!;
   }
 </style>

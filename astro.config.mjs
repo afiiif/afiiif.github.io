@@ -29,5 +29,11 @@ export default defineConfig({
       styles: ['normal'],
     },
   ],
-  integrations: [expressiveCode(), mdx(), sitemap()],
+  integrations: [
+    expressiveCode({
+      themes: ['github-dark'],
+    }),
+    mdx(),
+    sitemap(),
+  ],
 });
