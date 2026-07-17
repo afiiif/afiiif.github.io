@@ -24,7 +24,7 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
 
 <Layout title={data.title} description={data.description || data.title} ogImage={data.ogImage}>
   <h1 class="font-bold text-2xl sm:text-3xl mb-2 text-balance">{data.title}</h1>
-  <div class="text-13 text-neutral-500 flex gap-2 pb-5 font-mono">
+  <div class="text-13 text-neutral-500 flex gap-2 pb-7 font-mono">
     <a href="/" class="no-underline hover:text-neutral-400">Afifudin</a>
     <div>·</div>
     <div>{formattedPublishDate}</div>
@@ -62,7 +62,7 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
   }
 
   h2 {
-    @apply font-bold text-xl border-b border-b-neutral-800 pb-1.5 mt-14 mb-6;
+    @apply font-bold text-xl border-b border-b-neutral-800 pb-1.5 mt-16 mb-6;
   }
   h3 {
     @apply font-bold text-lg mt-6 mb-5;
