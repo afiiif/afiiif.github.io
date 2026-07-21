@@ -29,7 +29,7 @@ const sortedPosts = [...posts].sort(
               {publishedDate}
             </span>
             <div class="flex-1 font-medium pt-2 sm:pt-0">
-              <div class="text-base">{post.data.title}</div>
+              <div class="text-base text-pretty">{post.data.title}</div>
               {!!post.data.tags?.length && (
                 <div class="flex gap-1.5 flex-wrap text-13 sm:text-sm font-light font-mono invisible mt-4 sm:mt-3.5">
                   {post.data.tags.map((tag) => (
