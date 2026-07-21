@@ -8,13 +8,18 @@
   --text-13--line-height: 1.2rem;
 
   --text-15: 0.9375rem;
-  --text-15--line-height: 1.375rem;
+  --text-15--line-height: 1.5rem;
 }
 
 @layer base {
   body {
     color: #e2e8f0;
     background: #131314;
+  }
+
+  code,
+  pre {
+    font-variant-ligatures: none;
   }
 }
 
