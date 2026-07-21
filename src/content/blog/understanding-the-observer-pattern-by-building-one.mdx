@@ -320,9 +320,9 @@ function createStore<T>(initialValue: T) {
 
   function setState(newValue: T) {
     if (Object.is(newValue, state)) return;
-    const previousState = state;
+    const previousValue = state;
     state = newValue;
-    subscribers.forEach(fn => fn(newValue, previousState));
+    subscribers.forEach(fn => fn(newValue, previousValue));
   }
 
   function subscribe(fn: Subscriber<T>) {
