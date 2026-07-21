@@ -356,6 +356,11 @@ If our final API looks familiar, that's because you've probably seen it before.
 State management libraries like **Redux**, **Zustand**, and **TanStack Store** expose a similar `subscribe` API.
 React's `useSyncExternalStore` is also designed to work with external stores that provide `subscribe` and `getState`. Even Node.js's `EventEmitter` follows the same core idea, although it publishes named events instead of state changes.
 
-Those libraries provide many additional features and optimizations, but underneath, they're all built around the same fundamental concept: when something changes, notify everyone who's interested.
+Those libraries provide some additional features and optimizations,
+but underneath, they're all built around the same fundamental concept: **when something changes, notify everyone who's interested**.
+
+<div aria-hidden="true" class="text-center mt-9.5 mb-8 text-neutral-400">
+  {'* * *'}
+</div>
 
 _Sometimes, that's the best way to learn a design pattern: not by memorizing its definition, but by discovering why it exists in the first place._
