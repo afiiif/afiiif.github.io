@@ -1,0 +1,361 @@
+---
+title: Understanding the Observer Pattern by Building One
+description: Build the Observer Pattern from scratch in JavaScript. Learn subscriptions, state changes, and create a robust, reusable store step by step.
+tags: ['pattern', 'javascript']
+publishDate: July 21, 2026
+---
+
+Ever wondered how frontend global state managers work under the hood?
+One of the core ideas behind them is the **Observer Pattern**.
+
+In this article, we'll build an Observer Pattern from scratch. Rather than jumping straight to the final implementation, we'll introduce one challenge at a time and gradually improve our design to solve each one.
+
+The Observer Pattern isn't only used for frontend state management. That's just one of its many use cases. It's also widely used in backend systems and many other areas of software development.
+
+Let's get started!
+
+## Building the Foundation
+
+We'll begin with a regular JavaScript variable.\
+We can read its value and update it like this:
+
+```js
+let x = 1;
+
+// Read
+console.log(x); // 1
+
+// Update
+x = 2;
+console.log(x); // 2
+```
+
+Now let's say we have a new requirement:\
+We want to run some code whenever `x` changes.
+
+Easy!\
+First, instead of directly reassigning the value, we'll use a `setX` function.\
+Then, we simply call the callback from there.
+
+```js ins={6}
+let x = 1;
+
+function setX(newValue) {
+  if (newValue !== x) {
+    x = newValue;
+    doSomething();
+  }
+}
+```
+
+<div
+  class:list={[
+    "border border-sky-500 bg-sky-500/15 rounded-md",
+    "px-4 *:my-3! mt-2",
+    "*:text-sm [&_code]:text-sm!",
+  ]}
+>
+
+Notice that I also added the `newValue !== x` check to make sure the function
+is called only when the value actually changes.
+
+</div>
+
+Then another challenge comes up.\
+What if there are multiple things that should happen whenever `x` changes?
+
+We can simply call more functions.
+
+```js ins={7-9}
+let x = 1;
+
+function setX(newValue) {
+  if (newValue !== x) {
+    x = newValue;
+    doSomething();
+    foo();
+    bar();
+    baz();
+  }
+}
+```
+
+Soon you'll encounter another requirement.\
+What if the callbacks **need to be dynamic**?
+
+Sometimes you want to run `foo()`, `bar()`, and `baz()`.\
+Sometimes only `foo()` and `baz()`.\
+Sometimes only `baz()`.\
+And sometimes... nothing at all.
+
+A simple solution is to keep the callbacks in an array or, even better, a `Set`.
+
+```js
+let x = 1;
+
+const callbacks = new Set();
+
+function setX(newValue) {
+  if (newValue !== x) {
+    x = newValue;
+    callbacks.forEach(fn => fn());
+  }
+}
+
+setX(2);
+// Nothing happens
+
+callbacks.add(foo);
+callbacks.add(bar);
+
+setX(3);
+// foo called
+// bar called
+
+callbacks.delete(foo);
+callbacks.add(baz);
+
+setX(4);
+// bar called
+// baz called
+```
+
+Great! We've found a pattern.
+
+So far, this only works for the `x` variable.\
+Let's make it reusable by extracting the logic into a factory function.
+
+## Building a Reusable Store
+
+```js title="store.js"
+function createStore(initialValue) {
+  let state = initialValue;
+  const callbacks = new Set();
+
+  function getState() {
+    return state;
+  }
+
+  function setState(newValue) {
+    if (newValue !== state) {
+      state = newValue;
+      callbacks.forEach(fn => fn());
+    }
+  }
+
+  function addCallback(fn) {
+    callbacks.add(fn);
+  }
+
+  function removeCallback(fn) {
+    callbacks.delete(fn);
+  }
+
+  return {
+    getState,
+    setState,
+    addCallback,
+    removeCallback,
+  };
+}
+```
+
+<div class="h-2" />
+
+```js {1,4}
+const xStore = createStore(1);
+xStore.addCallback(foo);
+
+const yStore = createStore(true);
+yStore.addCallback(bar);
+if (something) {
+  yStore.addCallback(baz);
+}
+
+xStore.setState(2);
+// foo called
+
+yStore.setState(false);
+// bar called
+// baz called (if `something` is truthy)
+
+xStore.removeCallback(foo);
+xStore.setState(3);
+// No callbacks are called
+```
+
+This is already pretty good, but there's still room for improvement.
+
+Notice that we can't conveniently use anonymous functions like this:
+
+```js
+xStore.addCallback(() => console.log('Lorem ipsum'));
+xStore.removeCallback(() => console.log('Lorem ipsum'));
+```
+
+This won't work because those are two different function instances.\
+Instead, we have to store the function in a variable first.
+
+```js
+const theFn = () => console.log('Yay');
+
+xStore.addCallback(theFn);
+xStore.removeCallback(theFn);
+```
+
+That's a bit inconvenient.\
+A cleaner API is to have `addCallback()` return a function that removes the callback.
+
+```js ins={18}
+function createStore(initialValue) {
+  let state = initialValue;
+  const callbacks = new Set();
+
+  function getState() {
+    return state;
+  }
+
+  function setState(newValue) {
+    if (newValue !== state) {
+      state = newValue;
+      callbacks.forEach(fn => fn());
+    }
+  }
+
+  function addCallback(fn) {
+    callbacks.add(fn);
+    return () => callbacks.delete(fn);
+  }
+
+  return {
+    getState,
+    setState,
+    addCallback,
+  };
+}
+```
+
+Nice!\
+We've successfully built an Observer Pattern for our state.
+
+Let's make one more improvement by using more common terminology.\
+Instead of calling them _callbacks_, we'll call them **subscribers**, and also rename `addCallback` to `subscribe`.
+
+```js {3,7}
+function createStore(initialValue) {
+  let state = initialValue;
+  const subscribers = new Set();
+
+  // ...
+
+  function subscribe(fn) {
+    subscribers.add(fn);
+    return () => subscribers.delete(fn);
+  }
+
+  return {
+    getState,
+    setState,
+    subscribe,
+  };
+}
+```
+
+Let's make it even better.
+
+In some cases, subscribers need to know **what changed**.
+Rather than simply notifying them that something happened, we can pass both the new value and the previous value.
+
+Also, there's one more edge case to consider.\
+Right now we're comparing values with `newValue !== state`.
+This breaks when both values are `NaN`, because `NaN !== NaN` is always `true`.
+
+To make our implementation more robust, it's better to use `Object.is()`, which correctly handles `NaN`, `-0`, and other JavaScript edge cases.
+
+Here's the improved implementation:
+
+```js {10,13}
+function createStore(initialValue) {
+  let state = initialValue;
+  const subscribers = new Set();
+
+  function getState() {
+    return state;
+  }
+
+  function setState(newValue) {
+    if (Object.is(newValue, state)) return;
+    const previousValue = state;
+    state = newValue;
+    subscribers.forEach(fn => fn(newValue, previousValue));
+  }
+
+  function subscribe(fn) {
+    subscribers.add(fn);
+    return () => subscribers.delete(fn);
+  }
+
+  return {
+    getState,
+    setState,
+    subscribe,
+  };
+}
+```
+
+At this point, our `createStore` is already robust enough for production use.
+
+Finally, let's add TypeScript types.
+
+```ts title="store.ts"
+type Subscriber<T> = (newValue: T, previousValue: T) => void;
+
+function createStore<T>(initialValue: T) {
+  let state = initialValue;
+  const subscribers = new Set<Subscriber<T>>();
+
+  function getState() {
+    return state;
+  }
+
+  function setState(newValue: T) {
+    if (Object.is(newValue, state)) return;
+    const previousState = state;
+    state = newValue;
+    subscribers.forEach(fn => fn(newValue, previousState));
+  }
+
+  function subscribe(fn: Subscriber<T>) {
+    subscribers.add(fn);
+    return () => subscribers.delete(fn);
+  }
+
+  return {
+    getState,
+    setState,
+    subscribe,
+  };
+}
+```
+
+What's interesting is that we never set out to implement the Observer Pattern.
+
+We simply kept solving one problem after another:
+
+<div class="-mt-4" />
+
+- We wanted to run some code when a value changed.
+- Then we wanted multiple callbacks.
+- Then we wanted those callbacks to be dynamic.
+- Then we improved the API.
+- Finally, we handled edge cases and added type safety.
+
+By the end, we naturally arrived at the Observer Pattern.
+
+If our final API looks familiar, that's because you've probably seen it before.
+State management libraries like **Redux**, **Zustand**, and **TanStack Store** expose a similar `subscribe` API.
+React's `useSyncExternalStore` is also designed to work with external stores that provide `subscribe` and `getState`. Even Node.js's `EventEmitter` follows the same core idea, although it publishes named events instead of state changes.
+
+Those libraries provide many additional features and optimizations, but underneath, they're all built around the same fundamental concept: when something changes, notify everyone who's interested.
+
+_Sometimes, that's the best way to learn a design pattern: not by memorizing its definition, but by discovering why it exists in the first place._
