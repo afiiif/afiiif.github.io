@@ -46,6 +46,7 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
   $headings.forEach(($heading) => {
     const $a = document.createElement('a');
     $a.ariaHidden = 'true';
+    $a.ariaLabel = `Anchor to ${$heading.textContent}`;
     $a.tabIndex = -1;
     $a.href = location.pathname + '#' + $heading.id;
     $a.textContent = '#';
@@ -56,7 +57,18 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
 <style is:global>
   @reference '../../styles/global.css';
 
-  h2[id],
+  h2[id] {
+    @apply relative;
+    > a {
+      @apply text-neutral-500/20 font-light;
+      @apply absolute -left-4 w-5 no-underline text-[.85em] pt-[.125em];
+      @apply md:-left-6 md:w-7 md:text-[1em] md:pt-0;
+    }
+    &:hover > a {
+      @apply text-neutral-500 hover:text-blue-400;
+    }
+  }
+
   h3[id] {
     @apply relative;
     > a {
@@ -73,7 +85,7 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
     @apply font-bold text-xl border-b border-b-neutral-800 pb-1.5 mt-16 mb-6;
   }
   h3 {
-    @apply font-bold text-lg mt-6 mb-5;
+    @apply font-bold text-lg mt-7 mb-5;
   }
 
   p {
