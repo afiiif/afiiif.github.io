@@ -24,6 +24,10 @@
 }
 
 @layer components {
+  .content-container {
+    @apply mx-auto max-w-2xl;
+    @apply px-5 sm:px-6 transition-[padding];
+  }
   .hover-dashed {
     @apply no-underline decoration-blue-400;
     &:hover {
