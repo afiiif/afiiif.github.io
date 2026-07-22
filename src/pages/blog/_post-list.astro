@@ -18,14 +18,15 @@ const sortedPosts = [...posts].sort(
       const publishedDate = [
         post.data.publishDate.getFullYear(),
         String(post.data.publishDate.getMonth() + 1).padStart(2, '0'),
-      ].join(' / ');
+        String(post.data.publishDate.getDate()).padStart(2, '0'),
+      ].join('-');
       return (
         <li class:list={['py-1.5 border-b border-neutral-800 relative', i === 0 && 'border-t']}>
           <a
             href={`/blog/${post.id}`}
             class="block sm:flex py-6 px-3 hover:bg-neutral-900 rounded-lg"
           >
-            <span class="sm:w-27 text-neutral-400 font-extralight text-xs sm:text-sm sm:pt-0.5 tabular-nums">
+            <span class="sm:w-32 text-neutral-400 font-extralight text-xs sm:text-sm sm:pt-0.5 tabular-nums">
               {publishedDate}
             </span>
             <div class="flex-1 font-medium pt-2 sm:pt-0">
@@ -46,7 +47,7 @@ const sortedPosts = [...posts].sort(
               )}
             </div>
           </a>
-          <Tags tags={post.data.tags} className="absolute bottom-1.5 mb-6 px-3 sm:ml-27" />
+          <Tags tags={post.data.tags} className="absolute bottom-1.5 mb-6 px-3 sm:ml-32" />
         </li>
       );
     })
