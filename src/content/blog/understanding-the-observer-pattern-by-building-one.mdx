@@ -310,7 +310,7 @@ Finally, let's add TypeScript types.
 ```ts title="store.ts"
 type Subscriber<T> = (newValue: T, previousValue: T) => void;
 
-function createStore<T>(initialValue: T) {
+export function createStore<T>(initialValue: T) {
   let state = initialValue;
   const subscribers = new Set<Subscriber<T>>();
 
@@ -338,6 +338,83 @@ function createStore<T>(initialValue: T) {
 }
 ```
 
+## Real-World Enhancement
+
+Our `createStore` is already pretty complete, but there's one more enhancement that's **incredibly useful** in real-world applications.
+
+Sometimes a store owns an external resource that shouldn't stay alive forever.
+For example, it might open a WebSocket connection, subscribe to browser events, or start a polling timer.
+Ideally, those resources should only exist while the store actually has subscribers.
+
+Imagine a store that synchronizes its state through a WebSocket connection.
+If nobody is subscribed to the store, keeping the WebSocket connected is just wasting resources.\
+Instead, we can:
+
+<div class="-mt-4" />
+
+- Open the WebSocket when the **first subscriber** appears.
+- Close it when the **last subscriber** unsubscribes.
+
+<div class="h-5" />
+
+```ts
+createStore(initialValue, {
+  onFirstSubscribe: () => connectWebSocket(),
+  onLastUnsubscribe: () => disconnectWebSocket(),
+});
+```
+
+<div class="h-2" />
+
+```ts title="store.ts" ins={5-8,25-27,31-33}
+type Subscriber<T> = (newValue: T, previousValue: T) => void;
+
+export function createStore<T>(
+  initialValue: T,
+  options: {
+    onFirstSubscribe?: (state: T) => void;
+    onLastUnsubscribe?: (state: T) => void;
+  } = {},
+) {
+  let state = initialValue;
+  const subscribers = new Set<Subscriber<T>>();
+
+  function getState() {
+    return state;
+  }
+
+  function setState(newValue: T) {
+    if (Object.is(newValue, state)) return;
+    const previousValue = state;
+    state = newValue;
+    subscribers.forEach(fn => fn(newValue, previousValue));
+  }
+
+  function subscribe(fn: Subscriber<T>) {
+    if (subscribers.size === 0) {
+      options.onFirstSubscribe?.(state);
+    }
+    subscribers.add(fn);
+    return () => {
+      subscribers.delete(fn);
+      if (subscribers.size === 0) {
+        options.onLastUnsubscribe?.(state);
+      }
+    };
+  }
+
+  return {
+    getState,
+    setState,
+    subscribe,
+  };
+}
+```
+
+This small enhancement makes the store much more practical without changing its core design.
+
+## Closing
+
 What's interesting is that we never set out to implement the Observer Pattern.
 
 We simply kept solving one problem after another:
@@ -348,11 +425,13 @@ We simply kept solving one problem after another:
 - Then we wanted multiple callbacks.
 - Then we wanted those callbacks to be dynamic.
 - Then we improved the API.
-- Finally, we handled edge cases and added type safety.
+- Then we handled edge cases and added type safety.
+- Finally, we added lifecycle hooks for real-world use cases.
 
-By the end, we naturally arrived at the Observer Pattern.
+Along the way, we naturally arrived at the Observer Pattern.
+Once we had that solid foundation, extending it with practical features became straightforward.
 
-If our final API looks familiar, that's because you've probably seen it before.
+If our final API looks familiar, that's because you've probably seen similar APIs before.
 State management libraries like **Redux**, **Zustand**, and **TanStack Store** expose a similar `subscribe` API.
 React's `useSyncExternalStore` is also designed to work with external stores that provide `subscribe` and `getState`. Even Node.js's `EventEmitter` follows the same core idea, although it publishes named events instead of state changes.
 
