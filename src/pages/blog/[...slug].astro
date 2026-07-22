@@ -30,10 +30,15 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
     <div>{formattedPublishDate}</div>
   </div>
   <Content />
-  <Tags tags={data.tags} className="border-t border-neutral-800 pt-4 mt-16 pb-10" />
-  <a href="/blog" class="text-neutral-500 hover:text-neutral-400 focus:text-neutral-400">
-    ← Read other blog posts
-  </a>
+  <section class="border-t border-neutral-800 pt-4 mt-16">
+    <Tags tags={data.tags} className="pb-5" />
+    <a
+      href="/blog"
+      class="text-neutral-500 hover:text-neutral-400 focus:text-neutral-400 text-sm inline-block mt-5"
+    >
+      ← Read other blog posts
+    </a>
+  </section>
 </Layout>
 
 <script>
