@@ -241,7 +241,7 @@ We've successfully built an Observer Pattern for our state.
 Let's make one more improvement by using more common terminology.\
 Instead of calling them _callbacks_, we'll call them **subscribers**, and also rename `addCallback` to `subscribe`.
 
-```js {3,7}
+```js {3,7,15}
 function createStore(initialValue) {
   let state = initialValue;
   const subscribers = new Set();
