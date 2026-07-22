@@ -340,14 +340,58 @@ export function createStore<T>(initialValue: T) {
 
 ## Real-World Enhancement
 
-Our `createStore` is already pretty complete, but there's one more enhancement that's **incredibly useful** in real-world applications.
+Our `createStore` is already in good shape, but there are still plenty of ways to extend it depending on your use case.
+
+### Custom State Comparison
+
+Right now, we're using `Object.is()` to determine whether the state has changed.
+That's a sensible default, but it isn't the only option.
+Depending on your application, you might want to use shallow comparison, deep comparison, or even provide your own comparison function.
+
+For example, we could make the comparison strategy configurable:
+
+```ts
+createStore(initialValue, {
+  compareFn: (previousValue, newValue) => shallowEqual(previousValue, newValue),
+});
+```
+
+Then our implementation becomes:
+
+```ts ins={3-5,10-11}
+export function createStore<T>(
+  initialValue: T,
+  options: {
+    compareFn?: (previousValue: T, newValue: T) => boolean;
+  } = {},
+) {
+  // ...
+
+  function setState(newValue: T) {
+    const compareFn = options.compareFn || Object.is;
+    if (compareFn(state, newValue)) return;
+
+    const previousValue = state;
+    state = newValue;
+    subscribers.forEach(fn => fn(newValue, previousValue));
+  }
+
+  // ...
+}
+```
+
+This allows each store to choose the comparison strategy that best fits its data.
+
+### Store Lifecycle Hooks
+
+Another useful enhancement is exposing lifecycle hooks.
 
 Sometimes a store owns an external resource that shouldn't stay alive forever.
-For example, it might open a WebSocket connection, subscribe to browser events, or start a polling timer.
+For example, it might maintain a WebSocket connection, listen for browser events, or periodically poll an API.
 Ideally, those resources should only exist while the store actually has subscribers.
 
 Imagine a store that synchronizes its state through a WebSocket connection.
-If nobody is subscribed to the store, keeping the WebSocket connected is just wasting resources.\
+If nobody is subscribed to the store, keeping the connection open is just wasting resources.\
 Instead, we can:
 
 <div class="-mt-4" />
@@ -364,14 +408,15 @@ createStore(initialValue, {
 });
 ```
 
-<div class="h-2" />
+Which can be implemented like this:
 
-```ts title="store.ts" ins={5-8,25-27,31-33}
+```ts title="store.ts" ins={7-8,28-30,35-37}
 type Subscriber<T> = (newValue: T, previousValue: T) => void;
 
 export function createStore<T>(
   initialValue: T,
   options: {
+    compareFn?: (previousValue: T, newValue: T) => boolean;
     onFirstSubscribe?: (state: T) => void;
     onLastUnsubscribe?: (state: T) => void;
   } = {},
@@ -384,7 +429,9 @@ export function createStore<T>(
   }
 
   function setState(newValue: T) {
-    if (Object.is(newValue, state)) return;
+    const compareFn = options.compareFn || Object.is;
+    if (compareFn(state, newValue)) return;
+
     const previousValue = state;
     state = newValue;
     subscribers.forEach(fn => fn(newValue, previousValue));
@@ -395,6 +442,7 @@ export function createStore<T>(
       options.onFirstSubscribe?.(state);
     }
     subscribers.add(fn);
+
     return () => {
       subscribers.delete(fn);
       if (subscribers.size === 0) {
@@ -411,7 +459,7 @@ export function createStore<T>(
 }
 ```
 
-This small enhancement makes the store much more practical without changing its core design.
+These enhancements don't change the Observer Pattern itself. They simply build on top of the same foundation, making the store more flexible and practical for real-world applications.
 
 ## Closing
 
@@ -426,7 +474,7 @@ We simply kept solving one problem after another:
 - Then we wanted those callbacks to be dynamic.
 - Then we improved the API.
 - Then we handled edge cases and added type safety.
-- Finally, we added lifecycle hooks for real-world use cases.
+- Finally, we extended the store with features for real-world use cases.
 
 Along the way, we naturally arrived at the Observer Pattern.
 Once we had that solid foundation, extending it with practical features became straightforward.
