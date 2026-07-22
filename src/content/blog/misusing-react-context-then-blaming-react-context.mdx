@@ -61,7 +61,7 @@ But React Context isn't the problem here.
 The problem is that the state lives inside `App`, and `App` is responsible for rendering `Nav` and `Content`.
 Whenever theme state changes, `App` re-renders.
 
-Since `App` renders `Nav` and `Content`, they naturally re-render as well—even though they never read from the context.
+Since `App` renders `Nav` and `Content`, they naturally re-render as well, even though they never read from the context.
 
 This is purely a composition problem.
 
@@ -100,7 +100,7 @@ Now `Nav` and `Content` no longer re-render when the theme changes.
 
 Why?\
 Because the state now lives inside `ThemeProvider`, and `ThemeProvider` only re-renders the `ThemeContext.Provider`.
-The `children` are passed through as-is rather than being recreated by the component that owns the state.
+The `children` are simply passed through instead of being recreated by the component that owns the state.
 
 This is a much better composition and naturally avoids unnecessary re-renders.
 
@@ -384,7 +384,7 @@ React composition is different.\
 Passing React elements as `children` is extremely cheap.
 
 A deeply composed React tree doesn't automatically translate into a deeply nested DOM tree, nor does it imply expensive rendering.
-Don't confuse HTML nesting with React composition—they're completely different concepts.
+Don't confuse HTML nesting with React composition, they're completely different concepts.
 
 ## The Takeaway
 
