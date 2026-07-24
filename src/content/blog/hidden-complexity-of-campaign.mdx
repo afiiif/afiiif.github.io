@@ -1,0 +1,205 @@
+---
+title: The Hidden Complexity of a Campaign System
+description: An engineering case study on improving a production campaign system through observability, business rules, background jobs, reliability, and scalability.
+tags: ['backend']
+publishDate: July 25, 2026
+---
+
+About a year and a half ago, I worked on the campaign feature of our company's loyalty system.
+The feature already existed in our old loyalty system.
+Before I joined the company, the team had already decided to rewrite the entire system into a new codebase, and the rewrite was already in progress when I joined.
+
+The campaign system was one of the remaining features being implemented, and I happened to work on that area together with the team.
+
+The old system had been running in production for quite some time, and over the years merchants had reported various issues and feature requests.
+
+As we implemented the campaign system in the new codebase, we weren't simply copying the existing behavior. The rewrite gave us an opportunity to revisit how the feature worked and improve it along the way.
+
+Before jumping into the challenges, here's a quick overview of how the campaign system works:
+
+<div class="-mt-4" />
+
+- Each merchant has its own loyalty program.
+- Customers become members either by enrolling themselves or automatically after making a transaction with the merchant.
+- Whenever a merchant creates a campaign, every member of that loyalty program becomes the target audience.
+- A campaign can simply contain a message, or it can also include vouchers that customers can redeem later.
+
+Anyway, that's enough background. Let's get into the fun part.
+
+## Campaign Visibility
+
+One of the biggest pain points in the old system was visibility.
+
+The old system simply sent push notifications.
+It didn't keep a record of each delivery, so when merchants reported that some customers never received the campaign notification, we didn't have enough information to investigate.
+
+In the new system, we introduced a `campaign_delivery` record for every targeted customer.
+That gave us a place to track the lifecycle of each delivery.
+
+We also added a `delivered_at` timestamp.
+
+Unlike `created_at`, `delivered_at` is only populated after the push provider accepts the notification request.
+This allows us to distinguish between successful and failed deliveries, making merchant issues much easier to investigate.
+
+Later, I realized there was still another missing piece.
+
+Our loyalty system uses Wallet Pass.
+A push notification **doesn't** contain the latest campaign data.
+It simply tells the wallet app that something has changed.
+The wallet app then downloads the latest pass from our server.
+
+Receiving a successful response (2xx) from the push provider doesn't necessarily mean the customer has received the latest campaign.
+The device could be offline, the wallet app might not be running, or something else could prevent the notification from being processed.
+
+Whenever the wallet app downloads the latest pass, it calls a webhook on our backend.
+However, not every pass download is triggered by a campaign.
+
+To distinguish campaign-related downloads from everything else, we attached campaign metadata when updating the Wallet Pass and sending the notification. Later, when the webhook is triggered, we can inspect that metadata to identify which campaign triggered the download.
+
+With that information available, we introduced another timestamp, `received_at`, which is populated when the corresponding campaign-related download is received.
+Together with `created_at` and `delivered_at`, we can now see exactly how far each campaign delivery gets.
+
+```text
+Created (campaign delivery record created)
+↓
+Delivered (push provider accepted the notification)
+↓
+Received (Wallet Pass downloaded after the campaign notification)
+```
+
+We still can't always tell why the process stopped, but now we can at least tell where it stopped.
+
+## Campaign Is More Than Notifications
+
+Merchant feedback also changed how we looked at campaigns.
+A campaign isn't just about sending notifications.
+From a merchant's perspective, it's about reaching their loyalty members and encouraging them to come back.
+
+### Merchants Care About Members, Not Push Tokens
+
+Customers can become loyalty members either by enrolling themselves or automatically after making a transaction.
+Those automatically enrolled customers often haven't installed Wallet Pass yet, which means they don't have a push token.
+
+Previously, these customers were skipped because there was no notification to send.
+However, merchants expected every loyalty member to be included in the campaign, regardless of whether they had Wallet Pass installed.
+
+This became even more important for campaigns that included vouchers. Even if a customer had uninstalled Wallet Pass, they should still receive the voucher because they're still a loyalty member.
+
+To support that requirement, we changed the implementation so every eligible customer still gets a `campaign_delivery` record.
+If the customer doesn't have a push token, the delivery is simply marked as `SKIPPED`, while any voucher included in the campaign is still issued to the customer.
+
+Now, every eligible loyalty member is represented in the campaign, and the delivery status simply explains what happened to each of them.
+
+### Notifications per Device, Vouchers per Customer
+
+Interestingly, the opposite problem also existed.
+In the previous case, one customer had no push token.
+This time, one customer could have multiple push tokens.
+
+A customer can install the same Wallet Pass on multiple devices.
+That means we need to send notifications to every device.
+
+Vouchers are different.\
+A voucher belongs to the customer, not the device.
+
+So even if a customer receives notifications on multiple devices, they should only receive one voucher.
+
+In the end, push notifications are only a delivery mechanism. The campaign itself is still defined by business rules.
+
+## Coordinating Background Jobs
+
+Since campaign delivery is processed asynchronously, some decisions can't be made when the campaign is created.
+Instead, they need to be evaluated while the campaign delivery is being processed.
+
+### Notification Usage and Quota
+
+Notifications aren't sent immediately after a campaign is created. We can't increment notification usage upfront.
+Some deliveries might fail, and merchants shouldn't be charged for notifications that were never successfully delivered.
+Instead, notification usage is only incremented after a notification has been successfully delivered.
+
+Checking notification quota has a similar challenge.
+It isn't enough to check the quota only once when the campaign is created.
+While deliveries are waiting in the queue, other campaign deliveries might already consume the merchant's remaining quota.
+For that reason, every delivery checks the latest notification quota before attempting to send the notification.
+If there isn't enough quota left, the delivery is marked as `FAILED` instead of attempting to send the notification.
+
+### Campaigns Can Change While They're Running
+
+Another thing we had to consider is that campaigns don't remain static after they're created.
+For example, a merchant might cancel a campaign while thousands of deliveries are still waiting in the queue.
+Without another validation, the workers would continue sending notifications even though the campaign had already been canceled.
+
+To prevent that, every delivery checks the campaign status before sending the notification.
+If the campaign has been canceled, the delivery is simply skipped.
+
+### When Is It Safe to Say "Completed"?
+
+Another interesting challenge was determining when a campaign should actually be considered completed.
+
+Campaign deliveries are created by background workers, while a cron job periodically checks whether a campaign has finished and updates its status to `COMPLETED`.
+
+The logic sounds straightforward.\
+If there are no pending or in-progress deliveries, mark the campaign as completed.
+
+The problem is **timing**.
+
+Sometimes the cron job ran before the worker had even started creating the `campaign_delivery` records.
+Since no deliveries existed yet, the campaign was immediately marked as `COMPLETED`, even though it had barely started.
+
+The fix was surprisingly simple.
+The cron job now ignores recently created campaigns and only evaluates campaigns that are older than a configurable grace period.
+That gives the workers enough time to create the deliveries before the campaign status is synchronized.
+
+## Improving Delivery Reliability
+
+Sending thousands of notifications reliably isn't just about pushing requests as fast as possible.
+
+The push notification provider enforces rate limits, so sending too many requests within a short period of time only increases the chance of failures.
+To reduce that, we controlled how many notifications were sent within a given time window instead of letting every worker send requests as quickly as possible.
+
+Even then, temporary failures can still happen because of network issues or transient errors from the provider.
+Instead of treating those failures as final, we introduced a retry mechanism with a configurable maximum number of attempts.
+
+These changes significantly improved the success rate of campaign deliveries without requiring merchants to resend the entire campaign.
+
+## Scaling for Large Merchants
+
+The system had already been running in production, and everything worked well for newly onboarded merchants.
+The real challenge appeared when we started migrating long-established merchants to the new system.
+
+Unlike newer merchants, they had built up a much larger loyalty member base over the years.
+Suddenly, we were processing campaigns for tens of thousands of customers at once.
+
+The first problem we hit was PostgreSQL's query argument limit.
+We were inserting all `campaign_delivery` records in a single query, which eventually exceeded PostgreSQL's limit.
+
+The first fix was straightforward: split the inserts into smaller batches.
+That solved the query argument limit, but another problem appeared.
+
+Initially, those batches were executed concurrently to maximize throughput.
+For very large campaigns, however, running many batch inserts at the same time could overwhelm the database and eventually lead to timeouts.
+
+The solution was to process the batches sequentially instead.
+Although it wasn't as parallel, it proved to be much more reliable for large campaigns.
+
+This was a good reminder that production traffic often reveals problems that never appear during development.
+Sometimes, they don't even appear until your largest customers start using the system.
+
+## Reflections
+
+Looking back, none of these improvements introduced new features.
+
+Merchants could already create campaigns in the old system.
+
+What changed was everything around it.
+
+<div class="-mt-4" />
+
+- The system became easier to troubleshoot.
+- The business rules became more accurate.
+- Background jobs became more reliable.
+- Campaign delivery became more resilient.
+- And the system scaled much better as larger merchants were migrated.
+
+The end result wasn't a new feature.\
+It was a campaign system that behaved much closer to what merchants expected.
