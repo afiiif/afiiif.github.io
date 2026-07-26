@@ -75,7 +75,7 @@ const { pathname } = Astro.url;
         href="/"
         class:list={[
           'block rounded-md px-3 py-2',
-          'hover:text-white',
+          'hocus:text-white',
           pathname === '/' && 'underline underline-offset-8',
         ]}
       >
@@ -85,7 +85,7 @@ const { pathname } = Astro.url;
         href="/blog"
         class:list={[
           'block rounded-md px-3 py-2',
-          'hover:text-white',
+          'hocus:text-white',
           pathname.startsWith('/blog') && 'underline underline-offset-8',
           '-mr-3',
         ]}

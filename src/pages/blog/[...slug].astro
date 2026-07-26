@@ -41,11 +41,8 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
   <section class="content-container">
     <nav class="border-t border-neutral-800 pt-4 mt-16">
       <Tags tags={data.tags} className="pb-5" />
-      <a
-        href="/blog"
-        class="text-neutral-500 hover:text-neutral-400 focus:text-neutral-400 text-sm inline-block mt-5"
-      >
-        ← Read other blog posts
+      <a href="/blog" class="text-neutral-400 hocus:text-blue-400 text-sm inline-block mt-5 group">
+        ← <span class="group-hover:underline underline-offset-4">Read other blog posts</span>
       </a>
     </nav>
   </section>

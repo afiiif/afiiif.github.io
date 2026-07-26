@@ -11,6 +11,8 @@
   --text-15--line-height: 1.5rem;
 }
 
+@custom-variant hocus (&:hover, &:focus);
+
 @layer base {
   body {
     color: #e2e8f0;
