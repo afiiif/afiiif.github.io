@@ -135,7 +135,7 @@ const products = [
   </section>
 
   <h2 class="mt-24">SKILLS</h2>
-  <h3 class="font-semibold text-lg pt-8">Languages</h3>
+  <h3 class="font-semibold text-lg pt-8 mt-1">Languages</h3>
   <ul class="pt-2 flex flex-wrap gap-2 items-center skill-tags">
     <li>JavaScript</li>
     <li>TypeScript</li>
@@ -146,8 +146,8 @@ const products = [
   <ul class="pt-2 flex flex-wrap gap-2 items-center skill-tags">
     <li>React</li>
     <li>Next.js</li>
-    <li>Astro</li>
     <li>Svelte</li>
+    <li>Astro</li>
     <li>React Native</li>
     <li class="css-animation">CSS <span>Animation</span></li>
     <li>Responsive Design</li>
@@ -163,31 +163,27 @@ const products = [
     <li>GraphQL</li>
   </ul>
 
-  <h2 class="mt-24">LINKS</h2>
-  <ul
-    class:list={[
-      'pt-7',
-      '[&_a]:inline-block [&_a]:py-1',
-      '[&_a:hover]:underline underline-offset-6 [&_a:hover]:decoration-blue-400',
-      '[&_span]:text-neutral-400 [&_span]:ml-[3px]',
-    ]}
-  >
+  <h2 class="mt-24">GET IN TOUCH</h2>
+  <ul class="pt-8 links">
     <li>
-      <a href="mailto:me.afifudin@gmail.com">me.afifudin@gmail.com &nbsp;📬</a>
+      <div>Email</div>
+      <a href="mailto:me.afifudin@gmail.com">me.afifudin@gmail.com</a>
     </li>
     <li>
-      <a href="https://www.linkedin.com/in/m-afifudin/">
-        linkedin.com<span class="text-neutral-500!">/in</span><span>/m-afifudin</span>
-      </a>
+      <div>LinkedIn</div>
+      <a href="https://www.linkedin.com/in/m-afifudin/">Muhammad Afifudin</a>
     </li>
     <li>
-      <a href="https://github.com/afiiif">github.com<span>/afiiif</span></a>
+      <div>GitHub</div>
+      <a href="https://github.com/afiiif">afiiif</a>
     </li>
     <li>
-      <a href="https://x.com/digimushrm">x.com<span>/digimushrm</span></a>
+      <div>YouTube</div>
+      <a href="https://youtube.com/@afifu">@afifu</a>
     </li>
     <li>
-      <a href="https://youtube.com/@afifu">youtube.com<span>/@afifu</span></a>
+      <div>𝕏 (Twitter)</div>
+      <a href="https://x.com/digimushrm">digimushrm</a>
     </li>
   </ul>
 
@@ -222,6 +218,18 @@ const products = [
 
   .skill-tags > li {
     @apply bg-neutral-800 text-neutral-300 px-2 py-1 rounded-md font-mono text-13;
+  }
+
+  .links {
+    li {
+      @apply flex items-center py-0.5;
+    }
+    div {
+      @apply w-28 text-neutral-400 font-light;
+    }
+    a {
+      @apply inline-block py-0.5 underline underline-offset-6 decoration-neutral-700 hocus:decoration-blue-400;
+    }
   }
 
   .appear {
