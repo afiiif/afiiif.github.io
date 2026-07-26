@@ -135,25 +135,32 @@ const products = [
   </section>
 
   <h2 class="mt-24">SKILLS</h2>
-  <ul class="pt-8 flex flex-wrap gap-2 items-center skill-tags">
+  <h3 class="font-semibold text-lg pt-8">Languages</h3>
+  <ul class="pt-2 flex flex-wrap gap-2 items-center skill-tags">
     <li>JavaScript</li>
     <li>TypeScript</li>
-    <li>Node.js</li>
-    <li>Next JS</li>
-    <li>Astro JS</li>
-    <li>Svelte</li>
-    <li>Vanilla JS</li>
-    <li>jQuery</li>
-    <li>Tailwind</li>
-    <li>Ant Design</li>
-    <li class="css-animation">CSS <span>Animation</span></li>
-    <li>TanStack-Query</li>
-    <li>GraphQL</li>
-    <li>SQL</li>
     <li>Python</li>
+    <li>SQL</li>
+  </ul>
+  <h3 class="font-semibold text-lg pt-8">Frontend</h3>
+  <ul class="pt-2 flex flex-wrap gap-2 items-center skill-tags">
+    <li>React</li>
+    <li>Next.js</li>
+    <li>Astro</li>
+    <li>Svelte</li>
+    <li>React Native</li>
+    <li class="css-animation">CSS <span>Animation</span></li>
+    <li>Responsive Design</li>
+    <li>Accessibility</li>
     <li>Data Visualization</li>
-    <li>GIS</li>
-    <li class="text-neutral-400">and many more...</li>
+  </ul>
+  <h3 class="font-semibold text-lg pt-8">Backend</h3>
+  <ul class="pt-2 flex flex-wrap gap-2 items-center skill-tags">
+    <li>Node.js / Bun</li>
+    <li>Express.js</li>
+    <li>FastAPI</li>
+    <li>PostgreSQL</li>
+    <li>GraphQL</li>
   </ul>
 
   <h2 class="mt-24">LINKS</h2>
@@ -211,8 +218,8 @@ const products = [
     }
   }
 
-  .skill-tags > li:not(:last-child) {
-    @apply bg-neutral-800 px-2 py-1 rounded-md font-mono text-13;
+  .skill-tags > li {
+    @apply bg-neutral-800 text-neutral-300 px-2 py-1 rounded-md font-mono text-13;
   }
 
   .appear {
@@ -231,15 +238,15 @@ const products = [
   .css-animation {
     @apply relative overflow-hidden;
     &::after {
-      @apply block content-[""] absolute top-[-100%] -left-full w-[100%] h-[300%] -rotate-45;
+      @apply block content-[""] absolute -top-full -left-full w-full h-[300%] -rotate-45;
       background: radial-gradient(rgba(253, 230, 138, 0.2), transparent 80%);
       animation: cssAnimationShiny 12s linear infinite;
     }
     > span {
       @apply relative inline-block;
       text-shadow:
-        #38bdf8 0 -1.5em,
-        #e2e8f0 0 -3em;
+        #38bdf8 0 -1.65em,
+        #d4d4d4 0 -3.3em;
       animation: cssAnimationMoveUpDown 12s linear infinite;
     }
   }
@@ -262,16 +269,16 @@ const products = [
       top: 0em;
     }
     37.5% {
-      top: 1.5em;
+      top: 1.65em;
     }
     55% {
-      top: 1.5em;
+      top: 1.65em;
     }
     57.5% {
-      top: 3em;
+      top: 3.3em;
     }
     100% {
-      top: 3em;
+      top: 3.3em;
     }
   }
 </style>
