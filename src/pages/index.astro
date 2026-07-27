@@ -1,8 +1,11 @@
 ---
+import { getCollection } from 'astro:content';
+
 import Layout from './_layout.astro';
 
 import Products from './_home/_products.astro';
 import FishTank from './_home/_fish-tank.astro';
+import PostList from './blog/_post-list.astro';
 
 const products = [
   {
@@ -78,6 +81,15 @@ const products = [
     preview: { src: 'spk.webp', width: 600, height: 379 },
   },
 ];
+
+const blogPosts = await getCollection('blog');
+const featuredPosts = blogPosts.filter((post) =>
+  [
+    // 'hidden-complexity-of-campaign',
+    'understanding-the-observer-pattern-by-building-one',
+    'misusing-react-context-then-blaming-react-context',
+  ].includes(post.id),
+);
 ---
 
 <Layout
@@ -115,7 +127,6 @@ const products = [
   <!-- <p class="pt-4">I'm a professional remote worker, and usually not interested in on-site job.</p> -->
 
   <h2 class="mt-24">FEATURED PROJECTS</h2>
-
   <Products products={products} />
 
   <section class="pt-11 pb-3 sm:pb-6">
@@ -134,16 +145,26 @@ const products = [
     </p>
   </section>
 
-  <h2 class="mt-24">SKILLS</h2>
-  <h3 class="font-semibold text-lg pt-8 mt-1">Languages</h3>
-  <ul class="pt-2 flex flex-wrap gap-2 items-center skill-tags">
+  <h2 class="mt-28 mb-3.5">FEATURED ARTICLES</h2>
+  <PostList posts={featuredPosts} />
+  <a href="/blog" class="group text-neutral-400 inline-block mt-1 py-1 pr-2 text-sm">
+    <span
+      class="group-hocus:underline underline-offset-6 decoration-blue-400 group-hocus:text-white"
+    >
+      View all articles</span
+    > →
+  </a>
+
+  <h2 class="mt-28">SKILLS</h2>
+  <h3 class="font-semibold text-lg pt-7 mt-1">Languages</h3>
+  <ul class="pt-1.5 flex flex-wrap gap-2 items-center skill-tags">
     <li>JavaScript</li>
     <li>TypeScript</li>
     <li>Python</li>
     <li>SQL</li>
   </ul>
-  <h3 class="font-semibold text-lg pt-8">Frontend</h3>
-  <ul class="pt-2 flex flex-wrap gap-2 items-center skill-tags">
+  <h3 class="font-semibold text-lg pt-7">Frontend</h3>
+  <ul class="pt-1.5 flex flex-wrap gap-2 items-center skill-tags">
     <li>React</li>
     <li>Next.js</li>
     <li>Svelte</li>
@@ -154,8 +175,8 @@ const products = [
     <li>Accessibility</li>
     <li>Data Visualization</li>
   </ul>
-  <h3 class="font-semibold text-lg pt-8">Backend</h3>
-  <ul class="pt-2 flex flex-wrap gap-2 items-center skill-tags">
+  <h3 class="font-semibold text-lg pt-7">Backend</h3>
+  <ul class="pt-1.5 flex flex-wrap gap-2 items-center skill-tags">
     <li>Node.js / Bun</li>
     <li>Express.js</li>
     <li>FastAPI</li>
@@ -163,8 +184,8 @@ const products = [
     <li>GraphQL</li>
   </ul>
 
-  <h2 class="mt-24">GET IN TOUCH</h2>
-  <ul class="pt-8 links">
+  <h2 class="mt-28">GET IN TOUCH</h2>
+  <ul class="pt-7 links">
     <li>
       <div>Email</div>
       <a href="mailto:me.afifudin@gmail.com">me.afifudin@gmail.com</a>
