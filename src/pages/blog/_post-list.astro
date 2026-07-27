@@ -12,7 +12,7 @@ const sortedPosts = [...posts].sort(
 );
 ---
 
-<ul class="py-4 -mx-3">
+<ul class="py-4">
   {
     sortedPosts.map((post, i) => {
       const publishedDate = [
@@ -22,21 +22,28 @@ const sortedPosts = [...posts].sort(
       ].join('-');
       return (
         <li class:list={['py-1.5 border-b border-neutral-800 relative', i === 0 && 'border-t']}>
-          <a
-            href={`/blog/${post.id}`}
-            class="block sm:flex py-6 px-3 hover:bg-neutral-900 rounded-lg"
-          >
-            <span class="sm:w-32 text-neutral-400 font-extralight text-xs sm:text-sm sm:pt-0.5 tabular-nums">
+          <a href={`/blog/${post.id}`} class="block sm:flex py-5 rounded-lg group">
+            <span
+              class:list={[
+                'tabular-nums font-extralight text-neutral-400 group-hocus:text-neutral-300',
+                'text-xs sm:text-sm sm:w-32 sm:pt-0.5',
+              ]}
+            >
               {publishedDate}
             </span>
             <div class="flex-1 font-medium pt-2 sm:pt-0">
-              <div class="text-base text-pretty">{post.data.title}</div>
+              <div class="text-base text-pretty group-hocus:underline underline-offset-6 decoration-blue-400">
+                {post.data.title}
+              </div>
               {!!post.data.tags?.length && (
-                <div class="flex gap-1.5 flex-wrap text-13 sm:text-sm font-light font-mono invisible mt-4 sm:mt-3.5">
+                <div
+                  aria-hidden="true"
+                  class="flex gap-1.5 flex-wrap text-13 font-light font-mono invisible mt-4 sm:mt-3.5"
+                >
                   {post.data.tags.map((tag) => (
                     <div
                       class:list={[
-                        'rounded-md bg-neutral-800 text-neutral-300 px-1.5 py-0.5',
+                        'rounded-md bg-neutral-800 text-neutral-300 px-1.5 py-1',
                         'hover:text-blue-400',
                       ]}
                     >
@@ -47,7 +54,7 @@ const sortedPosts = [...posts].sort(
               )}
             </div>
           </a>
-          <Tags tags={post.data.tags} className="absolute bottom-1.5 mb-6 px-3 sm:ml-32" />
+          <Tags tags={post.data.tags} className="absolute bottom-2.5 mb-4 sm:ml-32" />
         </li>
       );
     })

@@ -10,7 +10,7 @@ const { tags, className } = Astro.props;
   !!tags?.length && (
     <div
       class:list={[
-        'flex gap-1.5 flex-wrap text-13 sm:text-sm font-light font-mono',
+        'flex gap-1.5 flex-wrap text-13 font-light font-mono',
         'pointer-events-none *:pointer-events-auto',
         className,
       ]}
@@ -19,7 +19,7 @@ const { tags, className } = Astro.props;
         <a
           href={`/blog/tag/${tag}`}
           class:list={[
-            'rounded-md bg-neutral-800 text-neutral-300 px-1.5 py-0.5',
+            'rounded-md bg-neutral-800 text-neutral-300 px-1.5 py-1',
             'hover:text-blue-400',
           ]}
         >
