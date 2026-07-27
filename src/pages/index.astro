@@ -196,19 +196,21 @@ const featuredPosts = blogPosts.filter((post) =>
     </li>
     <li>
       <div>GitHub</div>
-      <a href="https://github.com/afiiif">afiiif</a>
+      <a href="https://github.com/afiiif" target="_blank" rel="noopener noreferrer">afiiif</a>
+      <svg width="16" height="16">
+        <use href="#arrow-right-top"></use>
+      </svg>
     </li>
     <li>
       <div>YouTube</div>
-      <a href="https://youtube.com/@afifu">@afifu</a>
-    </li>
-    <li>
-      <div>𝕏 (Twitter)</div>
-      <a href="https://x.com/digimushrm">digimushrm</a>
+      <a href="https://youtube.com/@afifu" target="_blank" rel="noopener noreferrer">@afifu</a>
+      <svg width="16" height="16">
+        <use href="#arrow-right-top"></use>
+      </svg>
     </li>
   </ul>
 
-  <div class="pb-12"></div>
+  <div class="h-16"></div>
 
   <svg class="hidden">
     <symbol
@@ -251,6 +253,12 @@ const featuredPosts = blogPosts.filter((post) =>
     }
     a {
       @apply inline-block py-0.5 underline underline-offset-6 decoration-neutral-700 hocus:decoration-blue-400;
+    }
+    svg {
+      @apply size-4 text-blue-400 ml-1 opacity-0;
+    }
+    a:hover + svg {
+      @apply opacity-100;
     }
   }
 
