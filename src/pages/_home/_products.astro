@@ -31,6 +31,9 @@ const { products } = Astro.props;
       !product.href.startsWith('http') && process.env.NODE_ENV === 'development'
         ? `https://afiiif.github.io/${product.href}`
         : product.href;
+
+    const match = product.name.match(/^(.*?)\s*(\(.+\))$/);
+
     return (
       <section class="pt-11 pb-3 sm:pb-6">
         <div class="sm:flex sm:items-center sm:justify-between">
@@ -40,7 +43,16 @@ const { products } = Astro.props;
             rel="noopener noreferrer"
             class="[&:hover_h3]:underline underline-offset-6 [&:hover_h3]:decoration-blue-400 inline-block -my-1 py-1 mr-1.5"
           >
-            <h3 class="inline font-semibold text-lg">{product.name}</h3>{' '}
+            <h3 class="inline font-semibold text-lg">
+              {match ? (
+                <>
+                  {match[1] + ' '}
+                  <span class="font-light">{match[2]}</span>
+                </>
+              ) : (
+                product.name
+              )}
+            </h3>{' '}
             <svg width="16" height="16" class="inline w-4 h-4 relative -top-0.5 text-blue-400">
               <use href="#arrow-right-top" />
             </svg>
@@ -62,6 +74,7 @@ const { products } = Astro.props;
             return paragraph;
           })}
         </p>
+
         <div class="rounded-lg overflow-hidden relative border border-neutral-700 group">
           <button type="button" class="block w-full" aria-label={`View ${product.name}`}>
             {product.previewPlaceholder ? (

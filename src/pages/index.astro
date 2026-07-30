@@ -11,7 +11,7 @@ const products = [
   {
     href: 'https://pokemon-awesome.vercel.app/',
     name: 'Pokémon Awesome',
-    desc: 'Rank #2 on Google when you search for "compare pokemons".',
+    desc: 'A modern Pokémon web experience showcasing how thoughtful UX, polished animations, and performance optimization can coexist, even on free-tier infrastructure.',
     dateInfo: 'Jul 2024',
     preview: { src: 'pokemon-awesome.webp', width: 600, height: 379 },
     previewPlaceholder: { src: 'pokemon-awesome-placeholder.webp', width: 500, height: 316 },
@@ -19,15 +19,15 @@ const products = [
   {
     href: 'statistiku',
     name: 'Statistiku',
-    desc: 'An innovative web-based statistics tool, showcasing my proficiency in math, statistics, & programming. Yes, it really is from more than 7 years ago, built before AI era.',
+    desc: 'Originally built in 2019, hand-crafted before the AI-assisted development era, as a showcase of my mathematics and statistical computing background. Later transformed into a fully static web app in 2024, with heavy computations executed on the client using Web Workers to efficiently process large datasets without a backend.',
     dateInfo: 'Mar 2019',
     preview: { src: 'statistiku.webp', width: 600, height: 379 },
     previewPlaceholder: { src: 'statistiku-placeholder.webp', width: 500, height: 316 },
   },
   {
     href: 'https://yuustate.vercel.app/',
-    name: 'YuuState (TypeScript Library)',
-    desc: 'Lightweight, simple, and powerful state management library for React.js. It has the capability to replace both Zustand & TanStack Query!! 🤯',
+    name: 'YuuState (Package)',
+    desc: 'A lightweight React state management library that replaces both Zustand and TanStack Query through a unified API, while maintaining a significantly smaller bundle size. Internally explores concepts such as the observer pattern, stable cache key hashing, and Proxy-based fine-grained reactivity.',
     dateInfo: 'Apr 2026',
     preview: { src: 'yuustate-ts-library.webp', width: 800, height: 420 },
   },
@@ -40,22 +40,22 @@ const products = [
   },
   {
     href: 'https://isosehat.netlify.app/?source=afiiif.github.io',
-    name: 'Healthcare 🤝 Isochrone',
-    desc: 'An interactive GIS web app that integrates OpenStreetMap, OpenRoute Service, and WorldPop Hub data to analyze healthcare facilities accessibility using isochrones.',
+    name: 'IsoSehat (GIS)',
+    desc: 'Interactive geospatial analytics platform that combines travel-time isochrones and population density data to evaluate healthcare accessibility.',
     dateInfo: 'Oct 2024',
     preview: { src: '/img/healthcare-isochrone.webp', width: 870, height: 540 },
   },
   {
     href: 'https://marketplace.visualstudio.com/items?itemName=afifu.vscode-js-ts-react-nextjs-snippets',
     name: 'JS/TS React/Next.js Snippets',
-    desc: 'Productivity VSCode extension (12K+ installs).',
+    desc: 'VSCode extension, 12K+ installs, helping developers write code faster.',
     dateInfo: 'May 2023',
     preview: { src: 'vscode-js-ts-snippets.webp', width: 680, height: 306 },
   },
   {
     href: 'https://afiiif.github.io/family-tree',
     name: 'Family Tree App',
-    desc: 'Free family tree app, no installation, no ads, no login required, everything saved locally.',
+    desc: "A privacy-first family tree application that runs entirely in the browser—no installation, no login, no ads, with all data stored locally on the user's device.",
     dateInfo: 'Apr 2026',
     preview: { src: 'family-tree.webp', width: 960, height: 659 },
   },
@@ -68,8 +68,8 @@ const products = [
   },
   {
     href: 'https://www.youtube.com/watch?v=q7Lbn_JtLdw',
-    name: 'BagiTugas (BPS)',
-    desc: "Crafted an app from scratch using Bootstrap, PHP, and SQLite, which significantly improved the efficiency and speed of my coworker's workflow.",
+    name: 'BagiTugas (Task Management)',
+    desc: "Internal app for BPS branch offices that significantly improved the efficiency and speed of my coworker's workflow. Crafted from scratch using Bootstrap, PHP, and SQLite.",
     dateInfo: 'Jul 2020',
     preview: { src: 'bagitugas.png', width: 850, height: 403 },
   },
@@ -161,6 +161,7 @@ const featuredPosts = blogPosts.filter((post) =>
     <li>JavaScript</li>
     <li>TypeScript</li>
     <li>Python</li>
+    <li>PHP</li>
     <li>SQL</li>
   </ul>
   <h3 class="font-semibold text-lg pt-7">Frontend</h3>
@@ -354,5 +355,5 @@ const featuredPosts = blogPosts.filter((post) =>
         $img.nextElementSibling!.remove();
       });
     });
-  }, 1600);
+  }, 1700);
 </script>
