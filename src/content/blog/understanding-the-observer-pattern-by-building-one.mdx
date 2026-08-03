@@ -394,8 +394,6 @@ Imagine a store that synchronizes its state through a WebSocket connection.
 If nobody is subscribed to the store, keeping the connection open is just wasting resources.\
 Instead, we can:
 
-<div class="-mt-4" />
-
 - Open the WebSocket when the **first subscriber** appears.
 - Close it when the **last subscriber** unsubscribes.
 
@@ -466,8 +464,6 @@ These enhancements don't change the Observer Pattern itself. They simply build o
 What's interesting is that we never set out to implement the Observer Pattern.
 
 We simply kept solving one problem after another:
-
-<div class="-mt-4" />
 
 - We wanted to run some code when a value changed.
 - Then we wanted multiple callbacks.

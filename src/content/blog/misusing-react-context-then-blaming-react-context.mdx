@@ -42,8 +42,6 @@ function App() {
 
 Suppose:
 
-<div class="-mt-4" />
-
 - `Layout` consumes the theme.
 - `Footer` contains a theme toggle button that updates the theme.
 - `Nav` and `Content` don't consume the context at all.
@@ -277,8 +275,6 @@ They're just composition.
 
 The important distinction is understanding the difference between:
 
-<div class="-mt-4" />
-
 - Components rendered by another component.
 - React elements passed as the `children` prop.
 
@@ -304,8 +300,6 @@ function App() {
 
 Although this looks deeply nested, it isn't creating a long render chain.\
 The render work is simply:
-
-<div class="-mt-4" />
 
 - `App` renders `Foo`
 - `App` renders `Bar`
@@ -343,8 +337,6 @@ function Qux() {
 This creates an actual **render chain**.\
 The render flow becomes:
 
-<div class="-mt-4" />
-
 - `App` renders `Foo`
 - `Foo` renders `Bar`
 - `Bar` renders `Baz`
@@ -364,8 +356,6 @@ Another misconception is treating React composition the same way as deeply neste
 
 Deep HTML trees can absolutely affect performance.
 More DOM nodes mean more work for the browser:
-
-<div class="-mt-4" />
 
 - Layout calculation
 - Paint

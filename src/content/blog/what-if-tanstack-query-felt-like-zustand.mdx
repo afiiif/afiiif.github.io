@@ -226,8 +226,6 @@ To be honest, I don't think the implementation is particularly difficult. The fl
 
 Whenever a query is requested, the first thing we do is check whether there's already data in the cache.
 
-<div class="-mt-4" />
-
 - If there isn't, fetch the data and store the result.
 - If there is, check whether it's still fresh.
   - If it's still fresh, simply return the cached data.
@@ -247,8 +245,6 @@ There's no reason to send two identical network requests.
 The solution is simple.
 Whenever a fetch starts, I store the pending `Promise`.
 Then before starting a new request, check whether there's already a pending promise.
-
-<div class="-mt-4" />
 
 - If there isn't, start a new request and store its promise.
 - If there is, simply reuse the existing promise.
@@ -279,16 +275,12 @@ Invalidation is different from revalidation.
 
 Revalidation only cares about one thing: whether the cached data is still fresh.
 
-<div class="-mt-4" />
-
 - If the data is still fresh, do nothing.
 - Otherwise, fetch new data.
 
 It doesn't matter whether anyone is currently using the query.
 
 Invalidation is different because it also needs to know whether the query is active.
-
-<div class="-mt-4" />
 
 - If the query is active, fetch immediately.
 - If it's inactive, simply mark it as invalidated. The next subscriber will trigger the fetch.
@@ -312,8 +304,6 @@ Or should it always send a new request?
 
 Neither answer is always correct.
 So I made it configurable.
-
-<div class="-mt-4" />
 
 - System-triggered refetches reuse pending requests by default.
 - User-triggered refetches create a new request by default.
