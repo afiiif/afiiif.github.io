@@ -29,7 +29,8 @@ To my surprise, the core idea was much simpler than I had imagined.
 It was essentially an implementation of the **Observer Pattern**. The store lives outside React, while React simply subscribes to it through a hook.
 Of course, there are additional features on top of that, such as partial updates, selectors, and shallow comparison, but the core idea is still simple.
 
-Once I understood how to build a global state manager like Zustand, another question came to mind. Could the same idea be applied to asynchronous state? I believed it should be possible.
+Once I understood how to build a global state manager like Zustand, another question came to mind.
+**Could the same idea be applied to asynchronous state?** I believed it should be possible.
 
 I've also been using [TanStack Query](https://tanstack.com/query/latest) for a long time, back when it was still called `react-query`. At that time, most people were still using Redux, MobX, or Apollo Client for GraphQL applications.
 Over the years, I've become very familiar with its API, how query states change over time, and many of the edge cases it has to handle. I already had a rough idea of what an async state manager would need to solve, including caching, stale data, request deduplication, invalidation, retries, etc.
@@ -227,9 +228,9 @@ Whenever a query is requested, the first thing we do is check whether there's al
 
 This gives an instant response while still keeping the data up to date.
 
-To support this, I only needed to store one extra piece of information alongside the cached data: when it was successfully fetched.
+To support this, I only needed to store one extra piece of information alongside the cached data: `dataUpdatedAt`, the timestamp of when the data was successfully fetched.
 
-Whenever I need to check whether the cache is still fresh, I simply compare the current time with the cached timestamp and the configured `staleTime`.
+Whenever I need to check whether the cache is still fresh, I simply compare the current time with `dataUpdatedAt` and the configured `staleTime`.
 
 ## Avoiding Duplicate Requests
 
@@ -305,8 +306,13 @@ Invalidation is different because it also needs to know whether the query is act
 That requirement made the store API evolve again.
 I added another API to expose the current subscriber count.
 
-```tsx
-getSubscriberCount();
+```tsx ins={5}
+const storeApi = {
+  getState,
+  setState,
+  subscribe,
+  getSubscriberCount: () => subscribers.size,
+};
 ```
 
 Adding invalidation also changed how stale-while-revalidate worked.
@@ -320,7 +326,7 @@ Should the request be deduplicated?
 Or should it always send a new request?
 
 Neither answer is always correct.
-So I made it configurable.
+So I made it configurable, while still providing a good default.
 
 - System-triggered refetches reuse pending requests by default.
 - User-triggered refetches create a new request by default.
@@ -380,5 +386,4 @@ More than anything else, this project taught me a lot.
 
 Thank you for reading all the way to the end. I hope you found something interesting or useful along the way.
 
-If you'd like to explore the project, here's the link:\
-https://yuustate.vercel.app
+If you'd like to explore the project, here's the link: [yuustate.vercel.app](https://yuustate.vercel.app/)
