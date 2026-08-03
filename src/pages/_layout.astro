@@ -12,6 +12,8 @@ interface Props {
 }
 const { title, description, ogImage, className, noMain } = Astro.props;
 const { pathname } = Astro.url;
+
+const siteName = /^\/blog(\/.+)?/.test(pathname) ? "Afifudin's Blog" : 'Muhammad Afifudin';
 ---
 
 <html lang="en">
@@ -50,11 +52,13 @@ const { pathname } = Astro.url;
           <meta property="og:image" content={ogImage} />
           <meta property="twitter:card" content={ogImage} />
           <meta property="twitter:image" content={ogImage} />
+          <meta name="twitter:card" content="summary_large_image" />
         </>
       )
     }
 
-    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:site_name" content={siteName} />
+    <link rel="canonical" href={new URL(pathname, Astro.site)} />
     <meta name="theme-color" content="#131314" />
     <base href={`${Astro.url.origin}/`} />
 
