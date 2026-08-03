@@ -1,0 +1,375 @@
+---
+title: What If TanStack Query Felt Like Zustand?
+description: What started as an experiment to recreate Zustand eventually became a lightweight async state manager inspired by TanStack Query. Here's the engineering journey behind it.
+tags: ['frontend', 'react']
+publishDate: Aug 3, 2026
+---
+
+I've been using [Zustand](https://github.com/pmndrs/zustand) for years.
+One thing I've always loved is how simple it feels.
+You can read and update state anywhere, not just inside React components.
+
+```tsx
+const useTheme = create(() => ({ theme: 'dark' }));
+
+// Inside component
+function MyComponent() {
+  const { theme } = useTheme();
+}
+
+// Outside component
+const { theme } = useTheme.getState(); // read
+useTheme.setState({ theme: 'light' }); // update
+```
+
+I really liked how simple that API felt.
+After using it for a long time, I started wondering how Zustand actually worked. So I started **reading its source code**.
+
+To my surprise, the core idea was much simpler than I had imagined.
+It was essentially an implementation of the **Observer Pattern**. The store lives outside React, while React simply subscribes to it through a hook.
+Of course, there are additional features on top of that, such as partial updates, selectors, and shallow comparison, but the core idea is still simple.
+
+Once I understood how to build a global state manager like Zustand, another question came to mind. Could the same idea be applied to asynchronous state? I believed it should be possible.
+
+I've also been using [TanStack Query](https://tanstack.com/query/latest) for a long time, back when it was still called `react-query`. At that time, most people were still using Redux, MobX, or Apollo Client for GraphQL applications.
+Over the years, I've become very familiar with its API, how query states change over time, and many of the edge cases it has to handle. I already had a rough idea of what an async state manager would need to solve, including caching, stale data, request deduplication, invalidation, retries, etc.
+
+## Starting with the Developer Experience
+
+The first thing I thought about was not the implementation.\
+I started by thinking about the **developer experience**.
+
+I've actually been quite happy with TanStack Query's developer experience.
+Still, I wanted to experiment with a different approach.
+I wondered what it would feel like if asynchronous state had the same developer experience as Zustand, where reading state, updating it, or performing other actions outside React components feels effortless.
+
+I knew TanStack Query already lets us do that through `queryClient`, at least in non-SSR applications where the `queryClient` is shared globally.
+
+```tsx
+queryClient.getQueryData(['user']);
+queryClient.setQueryData(['user'], data);
+queryClient.refetchQueries({ queryKey: ['user'] });
+queryClient.invalidateQueries({ queryKey: ['user'] });
+```
+
+The only difference is that every query is referenced by its **query key** instead of a store variable.
+
+I completely understand why it's designed that way. I see it as a trade-off rather than a drawback. Since every query lives inside a centralized `queryClient`, using query keys is simply a consequence of that architecture.
+
+Instead of referencing every query by its query key, what if every query could simply become its own store?
+
+Something like this...
+
+```tsx
+const useUserQuery = createQuery(
+  getUser, // Query function
+  {}, // Config, like staleTime, gcTime
+);
+```
+
+Inside a React component, it should feel just like any other hook.
+
+```tsx
+const { isLoading, data, error } = useUserQuery();
+```
+
+Outside React, it should feel just like Zustand.
+
+```tsx
+const user = useUserQuery.getState().data;
+```
+
+This was exactly the developer experience I had in mind.
+
+Then I realized something. Some queries need parameters!
+
+## Supporting Parameterized Queries
+
+Fetching a user profile is straightforward. But many real-world queries require parameters.
+Fetching a product detail usually requires a product ID. Listing products might require filters, pagination, or sorting options.
+
+That raised an interesting design question.
+Where should the parameters be passed? Should they be provided when creating the query? When calling the hook? Or should every API accept the parameters separately?
+
+I wanted the API to feel consistent regardless of whether a query needed parameters or not.
+After trying several different ideas, I eventually settled on this design.
+
+```tsx
+const userQuery = createQuery(getUser);
+const productQuery = createQuery(getProduct);
+```
+
+Queries without parameters remain simple.
+
+```tsx
+// Inside component
+function UserProfile() {
+  const useUserQuery = userQuery();
+  const { isLoading, data } = useUserQuery();
+}
+
+// Outside component
+userQuery().getState();
+userQuery().invalidate();
+```
+
+For parameterized queries, the parameters are provided when selecting the query instance.
+
+```tsx {3}
+// Inside component
+function ProductDetail({ id }) {
+  const useProductQuery = productQuery({ id });
+  const { isLoading, data } = useProductQuery();
+}
+
+// Outside component
+productQuery({ id: 1 }).getState();
+productQuery({ id: 1 }).invalidate();
+```
+
+At first glance, the extra function call might look a little unusual. But each call has a different responsibility.
+The first call selects a query instance, while the second behaves as the React hook.
+
+I no longer had to think about query keys at all. Every query simply became another store, just like Zustand.
+
+At that point, I was happy with the API. Now I had to make it actually work.
+
+## Building the Engine
+
+At a high level, building the query store wasn't actually that complicated.
+Since I already understood how Zustand worked internally, I simply reused the same idea.
+Every query store is just an observable store that lives outside React.
+
+The only difference is that instead of storing arbitrary state, it stores query state.
+I also modeled the state using TypeScript [discriminated unions](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#discriminating-unions).
+That part was straightforward.
+
+```tsx
+type QueryState<TData> =
+  | { status: 'pending'; data: undefined; error: undefined }
+  | { status: 'success'; data: TData; error: undefined }
+  | { status: 'error'; data: undefined; error: Error };
+```
+
+The first real challenge was supporting parameterized queries.
+
+`getProduct({ id: 1 })` and `getProduct({ id: 2 })` should not share the same state, and certainly should not share the same cache.
+Every parameter combination needs its own store.
+
+A regular Zustand-like store only manages a single piece of state, so I needed a way to manage multiple stores behind a single query.
+
+The obvious solution was a [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map).\
+The next question was: how do we convert query parameters into a `Map`'s key?
+
+Using `JSON.stringify` almost works, but there is one important catch.
+
+```tsx
+JSON.stringify({ a: 1, b: 2 });
+// {"a":1,"b":2}
+
+JSON.stringify({ b: 2, a: 1 });
+// {"b":2,"a":1}
+```
+
+Although both objects represent the same query, they produce different strings because the property order is different.
+
+Instead of inventing my own solution, I borrowed the same stable hashing strategy used by TanStack Query.
+It sorts object keys before serializing them, ensuring objects with the same content always produce the same key.
+
+```tsx
+export const getHash = (value?: any) =>
+  JSON.stringify(value, (_, val) =>
+    isPlainObject(val)
+      ? Object.keys(val)
+          .sort()
+          .reduce((result, key) => {
+            result[key] = val[key];
+            return result;
+          }, {} as any)
+      : val,
+  );
+
+const hasObjectPrototype = (value: any) => {
+  return Object.prototype.toString.call(value) === '[object Object]';
+};
+
+const isPlainObject = (value: any) => {
+  if (!hasObjectPrototype(value)) return false;
+  const ctor = value.constructor;
+  if (typeof ctor === 'undefined') return true;
+  const prot = ctor.prototype;
+  if (!hasObjectPrototype(prot)) return false;
+  if (!prot.hasOwnProperty('isPrototypeOf')) return false;
+  if (Object.getPrototypeOf(value) !== Object.prototype) return false;
+  return true;
+};
+```
+
+<div
+  class:list={[
+    "border border-sky-500 bg-sky-500/15 rounded-md",
+    "px-3 *:my-2.5! mt-2",
+    "*:text-13 [&_code]:text-13!",
+  ]}
+>
+
+https://github.com/TanStack/query/blob/v5.90.3/packages/query-core/src/utils.ts#L216
+
+</div>
+
+With the basic architecture in place, I could finally start implementing the behaviors of a real async state manager.
+
+## Keeping Data Fresh
+
+The first feature I wanted was **stale-while-revalidate**.
+To be honest, I don't think the implementation is particularly difficult. The flow is pretty simple.
+
+Whenever a query is requested, the first thing we do is check whether there's already data in the cache.
+
+<div class="-mt-4" />
+
+- If there isn't, fetch the data and store the result.
+- If there is, check whether it's still fresh.
+  - If it's still fresh, simply return the cached data.
+  - If it's stale, return the cached data immediately, start a background fetch, then update the cache and notify all subscribers once the new data arrives.
+
+This gives an instant response while still keeping the data up to date.
+
+To support this, I only needed to store one extra piece of information alongside the cached data: when it was successfully fetched.
+
+Whenever I need to check whether the cache is still fresh, I simply compare the current time with the cached timestamp and the configured `staleTime`.
+
+## Avoiding Duplicate Requests
+
+Imagine two components requesting the same query at almost the same time.
+There's no reason to send two identical network requests.
+
+The solution is simple.
+Whenever a fetch starts, I store the pending `Promise`.
+Then before starting a new request, check whether there's already a pending promise.
+
+<div class="-mt-4" />
+
+- If there isn't, start a new request and store its promise.
+- If there is, simply reuse the existing promise.
+
+Both callers will receive the same response at the same time, and only one network request is sent.
+
+## Cleaning Up Unused Cache
+
+In TanStack Query, the garbage collection timer only starts when a query becomes **inactive**, meaning it no longer has any subscribers.
+
+To support the same behavior, I needed a way to know when a query no longer had any subscribers.
+
+Interestingly, solving this led to something I hadn't planned.
+I ended up improving the observer store by adding callbacks that are triggered when the first subscriber appears and when the last subscriber leaves.
+
+```tsx
+onFirstSubscribe();
+onLastUnsubscribe();
+```
+
+You could call them store events, or maybe store lifecycle hooks.
+
+For query stores, `onLastUnsubscribe` starts the garbage collection timer, while `onFirstSubscribe` cancels it if someone subscribes again before the timer expires.
+
+## Invalidating Queries
+
+Invalidation is different from revalidation.
+
+Revalidation only cares about one thing: whether the cached data is still fresh.
+
+<div class="-mt-4" />
+
+- If the data is still fresh, do nothing.
+- Otherwise, fetch new data.
+
+It doesn't matter whether anyone is currently using the query.
+
+Invalidation is different because it also needs to know whether the query is active.
+
+<div class="-mt-4" />
+
+- If the query is active, fetch immediately.
+- If it's inactive, simply mark it as invalidated. The next subscriber will trigger the fetch.
+
+That requirement made the store API evolve again.
+I added another API to expose the current subscriber count.
+
+```tsx
+getSubscriberCount();
+```
+
+Adding invalidation also changed how stale-while-revalidate worked.
+Previously, it only checked whether the cached data was still fresh. Now it also checks whether the query has been invalidated.
+If a query is invalidated, it should always fetch data, even if the cached data hasn't become stale yet.
+
+## Handling Race Condition
+
+What if the user manually refreshes while a background refetch is already running?
+Should the request be deduplicated?
+Or should it always send a new request?
+
+Neither answer is always correct.
+So I made it configurable.
+
+<div class="-mt-4" />
+
+- System-triggered refetches reuse pending requests by default.
+- User-triggered refetches create a new request by default.
+
+That felt like the most intuitive behavior.
+
+## Fine-Grained Reactivity
+
+The last thing I wanted to improve wasn't about asynchronous state.
+It was rendering performance.
+
+With Zustand, we usually use selectors so components only re-render when the selected slice changes.
+
+TanStack Query takes a different approach.
+It automatically tracks which properties are accessed during render, and only re-renders when those specific properties change.
+
+I found that really interesting.
+After reading through the implementation, it turned out that the answer was JavaScript's [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy).
+So I borrowed the same idea.
+
+The result is automatic fine-grained reactivity, without requiring selectors.
+
+## Looking Back
+
+I'm really happy with how the project turned out.
+
+I originally started by trying to rebuild Zustand.
+In the end, I built something that still feels like Zustand, but no longer requires selectors and even supports store lifecycle hooks.
+
+I also wanted to build something similar to TanStack Query, but with a Zustand-like developer experience.
+The result covers everything I personally use.
+As a nice bonus, the bundle size also ended up being significantly smaller than TanStack Query.
+
+There are still a few features I intentionally didn't implement, such as polling, infinite queries, and built-in DevTools.
+
+Polling is a good example.
+There are many questions that don't have a single correct answer.
+Should polling stop when the document becomes hidden?
+Should it stop when the user goes offline?
+What should happen if one of the polling requests fails?
+
+Different applications will want different behaviors.
+Instead of trying to support every possible combination, I decided to leave polling to userland.
+Since query stores already expose lifecycle hooks like `onFirstSubscribe` and `onLastUnsubscribe`, implementing custom polling behavior becomes very straightforward.
+
+I made a similar decision for infinite queries.
+Rather than introducing another dedicated API, I wanted to encourage **composition** instead.
+It turns out to be much simpler than I originally expected, and I included an example in the repository.
+
+As for DevTools...\
+Yeah... nobody got time for that. 😆
+
+More than anything else, this project taught me a lot.
+
+**Reading library source code teaches you a lot.**\
+**Building one yourself teaches you even more.**
+
+If you'd like to explore the project, here's the link:\
+https://yuustate.vercel.app

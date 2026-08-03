@@ -98,15 +98,9 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
 
   p {
     @apply my-5 text-neutral-300;
-    a {
-      @apply text-blue-400 underline;
-    }
   }
   .p {
     @apply text-neutral-300;
-    a {
-      @apply text-blue-400 underline;
-    }
   }
 
   ul {
@@ -117,8 +111,13 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
         @apply pt-2;
       }
     }
+  }
+
+  p,
+  .p,
+  ul {
     a {
-      @apply text-blue-400 underline;
+      @apply text-blue-400 underline decoration-neutral-700 hocus:decoration-blue-400;
     }
   }
 
@@ -128,6 +127,9 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
       @apply bg-neutral-800 text-white rounded inline-block px-1 mx-0.5;
       @apply text-sm font-extralight;
     }
+  }
+  a > code {
+    @apply bg-neutral-800/70 text-blue-400;
   }
 
   blockquote {
