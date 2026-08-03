@@ -254,9 +254,32 @@ To support the same behavior, I needed a way to know when a query no longer had 
 Interestingly, solving this led to something I hadn't planned.
 I ended up improving the observer store by adding callbacks that are triggered when the first subscriber appears and when the last subscriber leaves.
 
-```tsx
-onFirstSubscribe();
-onLastUnsubscribe();
+```tsx ins={4,5,12-14,18-20}
+export function createStore<T>(
+  initialValue: T,
+  options: {
+    onFirstSubscribe?: (state: T) => void;
+    onLastUnsubscribe?: (state: T) => void;
+  } = {},
+) {
+  // ...
+
+  function subscribe(fn: Subscriber<T>) {
+    subscribers.add(fn);
+    if (subscribers.size === 1) {
+      options.onFirstSubscribe?.(state);
+    }
+
+    return () => {
+      subscribers.delete(fn);
+      if (subscribers.size === 0) {
+        options.onLastUnsubscribe?.(state);
+      }
+    };
+  }
+
+  // ...
+}
 ```
 
 You could call them store events, or maybe store lifecycle hooks.

@@ -408,7 +408,7 @@ createStore(initialValue, {
 
 Which can be implemented like this:
 
-```ts title="store.ts" ins={7-8,28-30,35-37}
+```ts title="store.ts" ins={7-8,29-31,35-37}
 type Subscriber<T> = (newValue: T, previousValue: T) => void;
 
 export function createStore<T>(
@@ -436,10 +436,10 @@ export function createStore<T>(
   }
 
   function subscribe(fn: Subscriber<T>) {
-    if (subscribers.size === 0) {
+    subscribers.add(fn);
+    if (subscribers.size === 1) {
       options.onFirstSubscribe?.(state);
     }
-    subscribers.add(fn);
 
     return () => {
       subscribers.delete(fn);
