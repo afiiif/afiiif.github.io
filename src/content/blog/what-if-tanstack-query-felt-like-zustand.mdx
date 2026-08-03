@@ -176,6 +176,12 @@ Although both objects represent the same query, they produce different strings b
 Instead of inventing my own solution, I borrowed the same stable hashing strategy used by TanStack Query.
 It sorts object keys before serializing them, ensuring objects with the same content always produce the same key.
 
+<div class="break-all text-13">
+
+https://github.com/TanStack/query/blob/v5.90.3/packages/query-core/src/utils.ts#L216
+
+</div>
+
 ```tsx
 export const getHash = (value?: any) =>
   JSON.stringify(value, (_, val) =>
@@ -204,18 +210,6 @@ const isPlainObject = (value: any) => {
   return true;
 };
 ```
-
-<div
-  class:list={[
-    "border border-sky-500 bg-sky-500/15 rounded-md",
-    "px-3 *:my-2.5! mt-2",
-    "*:text-13 [&_code]:text-13!",
-  ]}
->
-
-https://github.com/TanStack/query/blob/v5.90.3/packages/query-core/src/utils.ts#L216
-
-</div>
 
 With the basic architecture in place, I could finally start implementing the behaviors of a real async state manager.
 
