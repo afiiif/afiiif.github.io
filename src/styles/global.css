@@ -11,7 +11,11 @@
   --text-15--line-height: 1.5rem;
 }
 
-@custom-variant hocus (&:hover, &:focus);
+@theme {
+  --breakpoint-xs: 28rem;
+}
+
+@custom-variant hocus (&:hover, &:focus-visible);
 
 @layer base {
   body {

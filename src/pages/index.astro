@@ -126,6 +126,21 @@ const featuredPosts = blogPosts.filter((post) =>
   </p>
   <!-- <p class="pt-4">I'm a professional remote worker, and usually not interested in on-site job.</p> -->
 
+  <div class="xs:flex xs:items-center pt-9 pb-2">
+    <div class="flex gap-2 items-center mb-1.5 xs:order-2 xs:mb-0 xs:ml-3.5">
+      <div class="size-3 bg-green-400 rounded-full animate-pulse"></div>
+      <div class="text-green-400 animate-pulse">Available for hire</div>
+    </div>
+    <a
+      href="/resume/Muhammad-Afifudin__Senior-Software-Engineer.pdf"
+      target="_blank"
+      class:list={[
+        'inline-block bg-neutral-800 font-mono px-3.5 py-1.5 rounded-lg',
+        'shiny hocus:text-blue-400',
+      ]}>Download Resume</a
+    >
+  </div>
+
   <h2 class="mt-24">FEATURED PROJECTS</h2>
   <Products products={products} />
 
@@ -171,7 +186,7 @@ const featuredPosts = blogPosts.filter((post) =>
     <li>Svelte</li>
     <li>Astro</li>
     <li>React Native</li>
-    <li class="css-animation">CSS <span>Animation</span></li>
+    <li class="shiny css-animation">CSS <span>Animation</span></li>
     <li>Responsive Design</li>
     <li>Accessibility</li>
     <li>Data Visualization</li>
@@ -285,13 +300,17 @@ const featuredPosts = blogPosts.filter((post) =>
     }
   }
 
-  .css-animation {
+  .shiny {
     @apply relative overflow-hidden;
     &::after {
       @apply block content-[""] absolute -top-full -left-full w-full h-[300%] -rotate-45;
       background: radial-gradient(rgba(253, 230, 138, 0.2), transparent 80%);
       animation: cssAnimationShiny 12s linear infinite;
     }
+  }
+
+  .css-animation {
+    @apply relative overflow-hidden;
     > span {
       @apply relative inline-block;
       text-shadow:
