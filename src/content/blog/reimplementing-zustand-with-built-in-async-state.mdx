@@ -79,6 +79,8 @@ Outside React, it should feel just like Zustand.
 
 ```tsx
 const user = useUserQuery.getState().data;
+
+useUserQuery.invalidate();
 ```
 
 This was exactly the developer experience I had in mind.
@@ -146,7 +148,7 @@ The only difference is that instead of storing arbitrary state, it stores query 
 I also modeled the state using TypeScript [discriminated unions](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#discriminating-unions).
 That part was straightforward.
 
-```tsx
+```tsx title="Simplified implementation for illustration purposes"
 type QueryState<TData> =
   | { status: 'pending'; data: undefined; error: undefined }
   | { status: 'success'; data: TData; error: undefined }
@@ -220,18 +222,44 @@ With the basic architecture in place, I could finally start implementing the beh
 The first feature I wanted was **stale-while-revalidate**.
 To be honest, I don't think the implementation is particularly difficult. The flow is pretty simple.
 
-Whenever a query is requested, the first thing we do is check whether there's already data in the cache.
+Whenever a component uses a query, it **always reads data directly from the store**, regardless of whether the data is fresh or stale.
+This allows the UI to render immediately without waiting for a network request.
 
-- If there isn't, fetch the data and store the result.
-- If there is, check whether it's still fresh.
-  - If it's still fresh, simply return the cached data.
-  - If it's stale, return the cached data immediately, start a background fetch, then update the cache and notify all subscribers once the new data arrives.
+At the same time, the query decides whether it should trigger a fetch.
 
-This gives an instant response while still keeping the data up to date.
+- If there isn't any cached data, fetch the data and store the result.
+- If there is cached data, check whether it's still fresh.
+  - If it's still fresh, don't send another request.
+  - If it's stale, trigger a background fetch.
 
-To support this, I only needed to store one extra piece of information alongside the cached data: `dataUpdatedAt`, the timestamp of when the data was successfully fetched.
+Once the fetch completes, the store is updated, which automatically notifies all subscribed components. They then re-render and receive the latest data from the store.
 
-Whenever I need to check whether the cache is still fresh, I simply compare the current time with `dataUpdatedAt` and the configured `staleTime`.
+To support this behavior, I only needed to store one extra piece of information alongside the cached data: `dataUpdatedAt`, the timestamp of when the data was last successfully fetched.
+
+Whenever I need to determine whether the cache is still fresh, I simply compare the current time with `dataUpdatedAt` and the configured `staleTime`.
+
+```tsx title="Simplified implementation for illustration purposes" {8-9,16}
+const execute = requestParam => {
+  const key = getHash(requestParam);
+  const queryStore = stores.get(key);
+
+  const { status, dataUpdatedAt } = queryStore.getState();
+
+  if (status === 'success') {
+    const isFresh = dataUpdatedAt + staleTime > Date.now();
+    if (isFresh) return;
+  }
+
+  queryFn(requestParam).then(res => {
+    queryStore.setState({
+      status: 'success',
+      data: res,
+      dataUpdatedAt: Date.now(),
+      error: null,
+    });
+  });
+};
+```
 
 ## Avoiding Duplicate Requests
 
@@ -246,6 +274,25 @@ Then before starting a new request, check whether there's already a pending prom
 - If there is, simply reuse the existing promise.
 
 Both callers will receive the same response at the same time, and only one network request is sent.
+
+```tsx title="Simplified implementation for illustration purposes" {6-8}
+const pendingRequests = new Map();
+
+const execute = requestParam => {
+  const key = getHash(requestParam);
+
+  if (pendingRequests.has(key)) {
+    return pendingRequests.get(key);
+  }
+
+  const promise = queryFn(requestParam).finally(() => {
+    pendingRequests.delete(key);
+  });
+
+  pendingRequests.set(key, promise);
+  return promise;
+};
+```
 
 ## Cleaning Up Unused Cache
 
@@ -316,9 +363,40 @@ const storeApi = {
 };
 ```
 
+<div class="h-2" />
+
+```tsx title="Simplified implementation for illustration purposes"
+const invalidate = () => {
+  if (store.getSubscriberCount() === 0) {
+    store.setState({ isInvalidated: true });
+    return;
+  }
+  refetch();
+};
+```
+
 Adding invalidation also changed how stale-while-revalidate worked.
 Previously, it only checked whether the cached data was still fresh. Now it also checks whether the query has been invalidated.
 If a query is invalidated, it should always fetch data, even if the cached data hasn't become stale yet.
+
+```tsx title="Simplified implementation for illustration purposes" {3,13}
+const { status, dataUpdatedAt, isInvalidated } = queryStore.getState();
+
+if (status === 'success' && !isInvalidated) {
+  const isFresh = dataUpdatedAt + staleTime > Date.now();
+  if (isFresh) return;
+}
+
+queryFn(requestParam).then(res => {
+  queryStore.setState({
+    status: 'success',
+    data: res,
+    dataUpdatedAt: Date.now(),
+    isInvalidated: false,
+    error: null,
+  });
+});
+```
 
 ## Handling Race Condition
 
@@ -327,10 +405,10 @@ Should the request be deduplicated?
 Or should it always send a new request?
 
 Neither answer is always correct.
-So I made it configurable, while still providing a good default.
+So I made it configurable.
 
-- System-triggered refetches reuse pending requests by default.
-- User-triggered refetches create a new request by default.
+- System-triggered refetches always reuse pending requests.
+- User-triggered refetches are configurable, but by default they create a new request.
 
 That felt like the most intuitive behavior.
 
