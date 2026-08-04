@@ -90,7 +90,7 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
 
   h2 {
     @apply font-bold text-xl sm:text-[1.4rem] mt-16;
-    @apply border-b border-b-neutral-800 pb-1.5 mb-6;
+    @apply border-b border-b-neutral-800 pb-1.5 mb-6 scroll-mt-7;
   }
   h3 {
     @apply font-bold text-lg mt-7 mb-5;
@@ -148,5 +148,9 @@ const formattedPublishDate = new Intl.DateTimeFormat('en-GB', {
 
   .expressive-code pre > code {
     @apply text-13!;
+  }
+
+  .expressive-code .ec-line.mark {
+    --tmLineBgCol: #264a8959 !important;
   }
 </style>
