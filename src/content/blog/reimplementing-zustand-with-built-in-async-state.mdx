@@ -148,7 +148,7 @@ The only difference is that instead of storing arbitrary state, it stores query 
 I also modeled the state using TypeScript [discriminated unions](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#discriminating-unions).
 That part was straightforward.
 
-```tsx title="Simplified implementation for illustration purposes"
+```tsx title="Simplified code for illustration"
 type QueryState<TData> =
   | { status: 'pending'; data: undefined; error: undefined }
   | { status: 'success'; data: TData; error: undefined }
@@ -238,7 +238,7 @@ To support this behavior, I only needed to store one extra piece of information 
 
 Whenever I need to determine whether the cache is still fresh, I simply compare the current time with `dataUpdatedAt` and the configured `staleTime`.
 
-```tsx title="Simplified implementation for illustration purposes" {8-9,16}
+```tsx title="Simplified code for illustration" {8-9,16}
 const execute = requestParam => {
   const key = getHash(requestParam);
   const queryStore = stores.get(key);
@@ -275,7 +275,7 @@ Then before starting a new request, check whether there's already a pending prom
 
 Both callers will receive the same response at the same time, and only one network request is sent.
 
-```tsx title="Simplified implementation for illustration purposes" {6-8}
+```tsx title="Simplified code for illustration" {6-8}
 const pendingRequests = new Map();
 
 const execute = requestParam => {
@@ -365,7 +365,7 @@ const storeApi = {
 
 <div class="h-2" />
 
-```tsx title="Simplified implementation for illustration purposes"
+```tsx title="Simplified code for illustration"
 const invalidate = () => {
   if (store.getSubscriberCount() === 0) {
     store.setState({ isInvalidated: true });
@@ -379,7 +379,7 @@ Adding invalidation also changed how stale-while-revalidate worked.
 Previously, it only checked whether the cached data was still fresh. Now it also checks whether the query has been invalidated.
 If a query is invalidated, it should always fetch data, even if the cached data hasn't become stale yet.
 
-```tsx title="Simplified implementation for illustration purposes" {3,13}
+```tsx title="Simplified code for illustration" {3,13}
 const { status, dataUpdatedAt, isInvalidated } = queryStore.getState();
 
 if (status === 'success' && !isInvalidated) {
