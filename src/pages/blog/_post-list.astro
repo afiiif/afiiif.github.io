@@ -7,14 +7,15 @@ interface Props {
   posts: Array<CollectionEntry<'blog'>>;
 }
 const { posts } = Astro.props;
-const sortedPosts = [...posts].sort(
-  (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime(),
-);
+
+const displayedPosts = posts
+  .filter((p) => !p.data.unlisted)
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
 ---
 
 <ul class="py-4">
   {
-    sortedPosts.map((post, i) => {
+    displayedPosts.map((post, i) => {
       const publishedDate = [
         post.data.publishDate.getFullYear(),
         String(post.data.publishDate.getMonth() + 1).padStart(2, '0'),
